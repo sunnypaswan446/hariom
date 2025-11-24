@@ -18,7 +18,8 @@ export const LOAN_TYPES: LoanType[] = [
 
 export const CASE_TYPES: CaseType[] = [
   'New',
-  'Balance Transfer',
+  'BT',
+  'Top-Up',
 ];
 
 export const JOB_PROFILES: JobProfile[] = [
@@ -145,7 +146,7 @@ export const INITIAL_CASES: LoanCase[] = [
     applicantName: 'Diana Prince',
     loanAmount: 100000,
     loanType: 'Business',
-    caseType: 'Balance Transfer',
+    caseType: 'BT',
     contactNumber: '456-789-0123',
     email: 'diana.p@example.com',
     address: '101 Maple Dr, Anytown, USA',

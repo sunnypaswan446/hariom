@@ -11,7 +11,7 @@ export type CaseStatus =
   | 'Approved';
 
 export type LoanType = 'Personal' | 'Home' | 'Car' | 'Business' | 'Education';
-export type CaseType = 'New' | 'Balance Transfer';
+export type CaseType = 'New' | 'BT' | 'Top-Up';
 export type Officer = 'John Doe' | 'Jane Smith' | 'Peter Jones' | 'Mary Williams';
 
 export type JobProfile = 'Government' | 'Private' | 'Business';
