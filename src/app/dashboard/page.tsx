@@ -32,13 +32,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { MoreHorizontal, PlusCircle, Download, Search } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Download, Search, Calendar as CalendarIcon } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
 import { StatusBadge } from '@/components/dashboard/status-badge';
 import type { CaseStatus, LoanCase, Officer } from '@/lib/types';
 import { STATUS_OPTIONS } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { format, parseISO } from 'date-fns';
+import { cn } from '@/lib/utils';
+import type { DateRange } from 'react-day-picker';
 
 export default function DashboardPage() {
   const { cases, updateCaseStatus, officers } = useLoanStore();
@@ -47,6 +52,8 @@ export default function DashboardPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
   const [officerFilter, setOfficerFilter] = useState<Officer | 'all'>('all');
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+
 
   const handleStatusChange = (caseId: string, newStatus: CaseStatus) => {
     updateCaseStatus(caseId, newStatus, `Status updated from dashboard.`);
@@ -65,9 +72,18 @@ export default function DashboardPage() {
       const statusMatch = statusFilter === 'all' || c.status === statusFilter;
       const officerMatch =
         officerFilter === 'all' || c.teamMember === officerFilter;
-      return searchMatch && statusMatch && officerMatch;
+      
+      const applicationDate = parseISO(c.applicationDate);
+      const dateMatch =
+        !dateRange ||
+        (!dateRange.from && !dateRange.to) ||
+        (dateRange.from && !dateRange.to && applicationDate >= dateRange.from) ||
+        (!dateRange.from && dateRange.to && applicationDate <= dateRange.to) ||
+        (dateRange.from && dateRange.to && applicationDate >= dateRange.from && applicationDate <= dateRange.to);
+
+      return searchMatch && statusMatch && officerMatch && dateMatch;
     });
-  }, [cases, searchTerm, statusFilter, officerFilter]);
+  }, [cases, searchTerm, statusFilter, officerFilter, dateRange]);
 
   return (
     <>
@@ -89,22 +105,22 @@ export default function DashboardPage() {
 
       <Card>
         <CardContent className="p-0">
-          <div className="flex items-center gap-4 p-4 border-b">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
+          <div className="p-4 border-b space-y-4">
+             <div className="relative w-full">
+               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+               <Input
                 placeholder="Search by name, phone, or loan type..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 w-full"
               />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col md:flex-row items-center gap-2">
               <Select
                 value={statusFilter}
                 onValueChange={(value) => setStatusFilter(value as any)}
               >
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full md:w-[180px]">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -118,7 +134,7 @@ export default function DashboardPage() {
                 value={officerFilter}
                 onValueChange={(value) => setOfficerFilter(value as any)}
               >
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full md:w-[180px]">
                   <SelectValue placeholder="Filter by Team Member" />
                 </SelectTrigger>
                 <SelectContent>
@@ -130,6 +146,42 @@ export default function DashboardPage() {
                   ))}
                 </SelectContent>
               </Select>
+               <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    id="date"
+                    variant={"outline"}
+                    className={cn(
+                      "w-full md:w-auto justify-start text-left font-normal",
+                      !dateRange && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {dateRange?.from ? (
+                      dateRange.to ? (
+                        <>
+                          {format(dateRange.from, "LLL dd, y")} -{" "}
+                          {format(dateRange.to, "LLL dd, y")}
+                        </>
+                      ) : (
+                        format(dateRange.from, "LLL dd, y")
+                      )
+                    ) : (
+                      <span>Pick a date range</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    initialFocus
+                    mode="range"
+                    defaultMonth={dateRange?.from}
+                    selected={dateRange}
+                    onSelect={setDateRange}
+                    numberOfMonths={2}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 
