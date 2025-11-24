@@ -3,11 +3,12 @@
 
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import type { LoanCase, CaseStatus, CaseUpdate } from './types';
-import { INITIAL_CASES } from './data';
+import type { LoanCase, CaseStatus, CaseUpdate, Officer } from './types';
+import { INITIAL_CASES, OFFICERS as INITIAL_OFFICERS } from './data';
 
 type State = {
   cases: LoanCase[];
+  officers: Officer[];
 };
 
 type Actions = {
@@ -20,11 +21,15 @@ type Actions = {
     details?: Partial<Pick<LoanCase, 'approvedAmount' | 'roi' | 'approvedTenure' | 'processingFee' | 'insuranceAmount'>>
   ) => void;
   updateCase: (updatedCase: LoanCase) => void;
+  addOfficer: (name: Officer) => void;
+  updateOfficer: (oldName: Officer, newName: Officer) => void;
+  removeOfficer: (name: Officer) => void;
 };
 
 export const useLoanStore = create<State & Actions>()(
   immer((set, get) => ({
     cases: INITIAL_CASES,
+    officers: INITIAL_OFFICERS,
 
     getCaseById: (id) => {
       return get().cases.find((c) => c.id === id);
@@ -74,6 +79,37 @@ export const useLoanStore = create<State & Actions>()(
                 state.cases[index] = updatedCase;
             }
         })
+    },
+
+    addOfficer: (name) => {
+      set(state => {
+        if (!state.officers.includes(name)) {
+          state.officers.push(name);
+        }
+      });
+    },
+
+    updateOfficer: (oldName, newName) => {
+      set(state => {
+        const index = state.officers.indexOf(oldName);
+        if (index !== -1) {
+          state.officers[index] = newName;
+          // Also update in existing cases
+          state.cases.forEach(c => {
+            if (c.teamMember === oldName) {
+              c.teamMember = newName;
+            }
+          });
+        }
+      });
+    },
+
+    removeOfficer: (name) => {
+      set(state => {
+        state.officers = state.officers.filter(o => o !== name);
+        // Optional: decide what to do with cases assigned to the removed officer.
+        // For now, we'll leave them as is. A select with a removed officer will just not show that option.
+      });
     }
   }))
 );

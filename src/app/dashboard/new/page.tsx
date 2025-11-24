@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 
 import { loanCaseSchema } from '@/lib/schema';
 import { useLoanStore } from '@/lib/store';
-import { LOAN_TYPES, OFFICERS, JOB_PROFILES, STATUS_OPTIONS, DOCUMENT_TYPES, CASE_TYPES, BANK_NAMES } from '@/lib/data';
+import { LOAN_TYPES, JOB_PROFILES, STATUS_OPTIONS, DOCUMENT_TYPES, CASE_TYPES, BANK_NAMES } from '@/lib/data';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -50,7 +50,7 @@ type LoanCaseFormValues = z.infer<typeof loanCaseSchema>;
 export default function AddLoanCasePage() {
   const router = useRouter();
   const { toast } = useToast();
-  const addCase = useLoanStore((state) => state.addCase);
+  const { addCase, officers } = useLoanStore();
 
   const form = useForm<LoanCaseFormValues>({
     resolver: zodResolver(loanCaseSchema),
@@ -462,7 +462,7 @@ export default function AddLoanCasePage() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {OFFICERS.map((officer) => (
+                            {officers.map((officer) => (
                               <SelectItem key={officer} value={officer}>
                                 {officer}
                               </SelectItem>

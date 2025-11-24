@@ -36,12 +36,12 @@ import { MoreHorizontal, PlusCircle, Download, Search } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
 import { StatusBadge } from '@/components/dashboard/status-badge';
 import type { CaseStatus, LoanCase, Officer } from '@/lib/types';
-import { OFFICERS, STATUS_OPTIONS } from '@/lib/data';
+import { STATUS_OPTIONS } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 
 export default function DashboardPage() {
-  const { cases, updateCaseStatus } = useLoanStore();
+  const { cases, updateCaseStatus, officers } = useLoanStore();
   const { toast } = useToast();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
@@ -123,7 +123,7 @@ export default function DashboardPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Team Members</SelectItem>
-                  {OFFICERS.map((officer) => (
+                  {officers.map((officer) => (
                     <SelectItem key={officer} value={officer}>
                       {officer}
                     </SelectItem>

@@ -59,6 +59,11 @@ const menuItems = [
     icon: Lightbulb,
     label: 'Suggestions',
   },
+   {
+    href: '/dashboard/settings',
+    icon: Settings,
+    label: 'Settings',
+  },
 ];
 
 export default function DashboardLayout({
@@ -123,8 +128,10 @@ export default function DashboardLayout({
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
-                    <Settings className="mr-2" />
-                    Settings
+                    <Link href="/dashboard/settings" className="w-full flex items-center">
+                      <Settings className="mr-2" />
+                      Settings
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>Logout</DropdownMenuItem>
