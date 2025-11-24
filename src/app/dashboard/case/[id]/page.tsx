@@ -145,7 +145,7 @@ export default function CaseDetailPage() {
     </div>
   );
 
-  const approvedStatuses: CaseStatus[] = ['Approved', 'Disbursed', 'Complete'];
+  const approvedStatuses: CaseStatus[] = ['Approved', 'Disbursed'];
 
   return (
     <>
@@ -360,7 +360,7 @@ export default function CaseDetailPage() {
                <DetailItem
                 icon={Landmark}
                 label="Bank Name"
-                value={loanCase.bankName}
+                value={loanCase.bankName === 'Other' ? loanCase.otherBankName : loanCase.bankName}
               />
                <DetailItem
                 icon={Briefcase}

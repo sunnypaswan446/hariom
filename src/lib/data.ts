@@ -1,5 +1,5 @@
 
-import type { LoanCase, Officer, LoanType, JobProfile, CaseStatus, DocumentType, CaseType, BankName } from './types';
+import type { LoanCase, Officer, LoanType, JobProfile, CaseStatus, DocumentType, BankName } from './types';
 
 export const OFFICERS: Officer[] = [
   'John Doe',
@@ -50,44 +50,22 @@ export const DOCUMENT_TYPES: DocumentType[] = [
 ];
 
 export const BANK_NAMES: BankName[] = [
-  // Private Sector Banks
   "HDFC Bank",
   "ICICI Bank",
   "Axis Bank",
   "Kotak Mahindra Bank",
   "IndusInd Bank",
   "Yes Bank",
-  "Federal Bank",
-  "IDFC First Bank",
-  "RBL Bank",
-  "Bandhan Bank",
-  "CSB Bank",
-  "DCB Bank",
-  "Dhanlaxmi Bank",
-  "Jammu & Kashmir Bank",
-  "Karnataka Bank",
-  "Karur Vysya Bank",
-  "Nainital Bank",
-  "South Indian Bank",
-  "Tamilnad Mercantile Bank",
-"City Union Bank",
-  // NBFCs
-  "Bajaj Finance",
-  "HDB Financial Services",
-  "Tata Capital",
+  "Bajaj Finance Ltd.",
+  "Tata Capital Financial Services",
+  "HDB Financial Services (HDFC Group)",
+  "Aditya Birla Finance Ltd.",
   "Mahindra & Mahindra Financial Services",
-  "L&T Finance",
-  "Muthoot Finance",
-  "Cholamandalam Investment and Finance Company",
-  "Shriram Transport Finance Company",
-  "Aditya Birla Finance",
-  "Fullerton India",
-  "Poonawalla Fincorp",
-  // Other / Small Finance Banks
-  "AU Small Finance Bank",
-  "Equitas Small Finance Bank",
-  "Ujjivan Small Finance Bank",
-  "Jana Small Finance Bank",
+  "L&T Finance Ltd.",
+  "Piramal Capital & Housing Finance",
+  "Shriram Finance Ltd.",
+  "Cholamandalam Investment & Finance",
+  "Muthoot Finance Ltd.",
   "Other"
 ];
 
@@ -239,7 +217,7 @@ export const INITIAL_CASES: LoanCase[] = [
     jobProfile: 'Government',
     jobDesignation: 'Field Agent',
     referenceName: 'Luther Stickell',
-    bankName: 'Bajaj Finance',
+    bankName: 'Bajaj Finance Ltd.',
     bankOfficeSm: 'SM-4',
     documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: true })),
     tenure: 12,
@@ -274,7 +252,8 @@ export const INITIAL_CASES: LoanCase[] = [
     jobProfile: 'Private',
     jobDesignation: 'Student',
     referenceName: 'Michael Westen',
-    bankName: 'Ujjivan Small Finance Bank',
+    bankName: 'Other',
+    otherBankName: 'A Small Regional Bank',
     bankOfficeSm: 'SM-2',
     documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: true })),
     tenure: 60,

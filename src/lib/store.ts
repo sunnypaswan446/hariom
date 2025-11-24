@@ -33,8 +33,12 @@ export const useLoanStore = create<State & Actions>()(
     addCase: (newCase) => {
       set((state) => {
         const newId = `LC-${String(state.cases.length + 1).padStart(3, '0')}`;
+        const finalCase = { ...newCase };
+        if (finalCase.bankName !== 'Other') {
+          delete finalCase.otherBankName;
+        }
         state.cases.unshift({
-          ...newCase,
+          ...finalCase,
           id: newId,
           history: [],
         });
@@ -52,7 +56,7 @@ export const useLoanStore = create<State & Actions>()(
                     remarks,
                 }
                 loanCase.history.push(newUpdate);
-                if (status === 'Approved' && details) {
+                if ((status === 'Approved' || status === 'Disbursed') && details) {
                     loanCase.approvedAmount = details.approvedAmount;
                     loanCase.roi = details.roi;
                     loanCase.approvedTenure = details.approvedTenure;

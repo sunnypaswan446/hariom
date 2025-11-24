@@ -60,6 +60,7 @@ export const loanCaseSchema = z.object({
   bankName: z.enum(BANK_NAMES, {
     errorMap: () => ({ message: 'Please select a valid bank.' }),
   }),
+  otherBankName: z.string().optional(),
   bankOfficeSm: z.string().min(2, { message: 'Bank Office/SM is required.' }),
   documents: z.array(z.object({
     type: z.enum(DOCUMENT_TYPES),
@@ -71,6 +72,14 @@ export const loanCaseSchema = z.object({
   approvedTenure: z.coerce.number().optional(),
   processingFee: z.coerce.number().optional(),
   insuranceAmount: z.coerce.number().optional(),
+}).refine(data => {
+    if (data.bankName === 'Other') {
+        return !!data.otherBankName && data.otherBankName.length > 2;
+    }
+    return true;
+}, {
+    message: 'Please specify the bank name when "Other" is selected.',
+    path: ['otherBankName'],
 });
 
 export const statusUpdateSchema = z.object({

@@ -37,44 +37,22 @@ export interface LoanCaseDocument {
 }
 
 export type BankName = 
-  // Private Sector Banks
   | "HDFC Bank"
   | "ICICI Bank"
   | "Axis Bank"
   | "Kotak Mahindra Bank"
   | "IndusInd Bank"
   | "Yes Bank"
-  | "Federal Bank"
-  | "IDFC First Bank"
-  | "RBL Bank"
-  | "Bandhan Bank"
-  | "CSB Bank"
-  | "DCB Bank"
-  | "Dhanlaxmi Bank"
-  | "Jammu & Kashmir Bank"
-  | "Karnataka Bank"
-  | "Karur Vysya Bank"
-  | "Nainital Bank"
-  | "South Indian Bank"
-  | "Tamilnad Mercantile Bank"
-  | "City Union Bank"
-  // NBFCs
-  | "Bajaj Finance"
-  | "HDB Financial Services"
-  | "Tata Capital"
+  | "Bajaj Finance Ltd."
+  | "Tata Capital Financial Services"
+  | "HDB Financial Services (HDFC Group)"
+  | "Aditya Birla Finance Ltd."
   | "Mahindra & Mahindra Financial Services"
-  | "L&T Finance"
-  | "Muthoot Finance"
-  | "Cholamandalam Investment and Finance Company"
-  | "Shriram Transport Finance Company"
-  | "Aditya Birla Finance"
-  | "Fullerton India"
-  | "Poonawalla Fincorp"
-  // Other / Small Finance Banks
-  | "AU Small Finance Bank"
-  | "Equitas Small Finance Bank"
-  | "Ujjivan Small Finance Bank"
-  | "Jana Small Finance Bank"
+  | "L&T Finance Ltd."
+  | "Piramal Capital & Housing Finance"
+  | "Shriram Finance Ltd."
+  | "Cholamandalam Investment & Finance"
+  | "Muthoot Finance Ltd."
   | "Other";
 
 
@@ -100,6 +78,7 @@ export interface LoanCase {
   jobDesignation: string;
   referenceName: string;
   bankName: BankName;
+  otherBankName?: string;
   bankOfficeSm: string;
   documents: LoanCaseDocument[];
   tenure: number;

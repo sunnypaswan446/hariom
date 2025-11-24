@@ -83,6 +83,8 @@ export default function AddLoanCasePage() {
     const currentDocument = form.getValues(`documents.${index}`);
     update(index, { ...currentDocument, uploaded: !!file, file });
   };
+  
+  const bankName = form.watch('bankName');
 
   function onSubmit(data: LoanCaseFormValues) {
     addCase({
@@ -542,6 +544,21 @@ export default function AddLoanCasePage() {
                         </FormItem>
                       )}
                     />
+                    {bankName === 'Other' && (
+                       <FormField
+                        control={form.control}
+                        name="otherBankName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Other Bank Name</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter bank name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                     <FormField
                       control={form.control}
                       name="bankOfficeSm"
