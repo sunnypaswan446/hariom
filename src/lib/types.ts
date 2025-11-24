@@ -37,19 +37,6 @@ export interface LoanCaseDocument {
 }
 
 export type BankName = 
-  // Public Sector Banks
-  | "State Bank of India"
-  | "Punjab National Bank"
-  | "Bank of Baroda"
-  | "Canara Bank"
-  | "Union Bank of India"
-  | "Bank of India"
-  | "Indian Bank"
-  | "Central Bank of India"
-  | "Indian Overseas Bank"
-  | "UCO Bank"
-  | "Bank of Maharashtra"
-  | "Punjab & Sind Bank"
   // Private Sector Banks
   | "HDFC Bank"
   | "ICICI Bank"
@@ -123,3 +110,5 @@ export interface LoanCase {
   processingFee?: number;
   insuranceAmount?: number;
 }
+
+    

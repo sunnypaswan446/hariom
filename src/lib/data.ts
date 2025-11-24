@@ -50,19 +50,6 @@ export const DOCUMENT_TYPES: DocumentType[] = [
 ];
 
 export const BANK_NAMES: BankName[] = [
-  // Public Sector Banks
-  "State Bank of India",
-  "Punjab National Bank",
-  "Bank of Baroda",
-  "Canara Bank",
-  "Union Bank of India",
-  "Bank of India",
-  "Indian Bank",
-  "Central Bank of India",
-  "Indian Overseas Bank",
-  "UCO Bank",
-  "Bank of Maharashtra",
-  "Punjab & Sind Bank",
   // Private Sector Banks
   "HDFC Bank",
   "ICICI Bank",
@@ -164,7 +151,7 @@ export const INITIAL_CASES: LoanCase[] = [
     jobProfile: 'Government',
     jobDesignation: 'Project Manager',
     referenceName: 'Carol Williams',
-    bankName: 'State Bank of India',
+    bankName: 'HDFC Bank',
     bankOfficeSm: 'SM-2',
     documents: DOCUMENT_TYPES.map((type, i) => ({ type, uploaded: i < 2 })),
     tenure: 240,
@@ -326,3 +313,5 @@ export const INITIAL_CASES: LoanCase[] = [
     obligation: 100,
   },
 ];
+
+    
