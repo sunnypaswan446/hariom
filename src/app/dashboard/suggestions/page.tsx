@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -74,7 +75,7 @@ export default function SuggestionPage() {
       <div>
         <p className="text-sm text-muted-foreground">{title}</p>
         <p className="text-xl font-semibold">
-          {isCurrency ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value)) : value}
+          {isCurrency ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(value)) : value}
         </p>
       </div>
     </div>

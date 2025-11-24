@@ -159,9 +159,9 @@ export default function DashboardPage() {
                         {loanCase.applicantName}
                       </TableCell>
                       <TableCell className="text-right">
-                        {new Intl.NumberFormat('en-US', {
+                        {new Intl.NumberFormat('en-IN', {
                           style: 'currency',
-                          currency: 'USD',
+                          currency: 'INR',
                         }).format(loanCase.loanAmount)}
                       </TableCell>
                       <TableCell>{loanCase.loanType}</TableCell>

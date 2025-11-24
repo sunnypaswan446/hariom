@@ -309,10 +309,10 @@ export default function CaseDetailPage() {
               <DetailItem icon={CreditCard} label="PAN Card" value={loanCase.panCardNumber} />
                <DetailItem
                 icon={DollarSign}
-                label="Salary (Annual)"
-                value={new Intl.NumberFormat('en-US', {
+                label="Salary (Monthly)"
+                value={new Intl.NumberFormat('en-IN', {
                   style: 'currency',
-                  currency: 'USD',
+                  currency: 'INR',
                 }).format(loanCase.salary)}
               />
               <DetailItem icon={Briefcase} label="Job Profile" value={loanCase.jobProfile} />
@@ -333,9 +333,9 @@ export default function CaseDetailPage() {
               <DetailItem
                 icon={DollarSign}
                 label="Required Loan Amount"
-                value={new Intl.NumberFormat('en-US', {
+                value={new Intl.NumberFormat('en-IN', {
                   style: 'currency',
-                  currency: 'USD',
+                  currency: 'INR',
                 }).format(loanCase.loanAmount)}
               />
               <DetailItem icon={Clock} label="Tenure (months)" value={loanCase.tenure} />
@@ -344,9 +344,9 @@ export default function CaseDetailPage() {
                <DetailItem
                 icon={DollarSign}
                 label="Obligation"
-                value={new Intl.NumberFormat('en-US', {
+                value={new Intl.NumberFormat('en-IN', {
                   style: 'currency',
-                  currency: 'USD',
+                  currency: 'INR',
                 }).format(loanCase.obligation)}
               />
               <DetailItem
@@ -384,7 +384,7 @@ export default function CaseDetailPage() {
                    <DetailItem
                     icon={DollarSign}
                     label="Approved Amount"
-                    value={loanCase.approvedAmount ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(loanCase.approvedAmount) : 'N/A'}
+                    value={loanCase.approvedAmount ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(loanCase.approvedAmount) : 'N/A'}
                   />
                    <DetailItem
                     icon={Percent}
@@ -399,12 +399,12 @@ export default function CaseDetailPage() {
                    <DetailItem
                     icon={FileText}
                     label="Processing Fee"
-                     value={loanCase.processingFee ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(loanCase.processingFee) : 'N/A'}
+                     value={loanCase.processingFee ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(loanCase.processingFee) : 'N/A'}
                   />
                    <DetailItem
                     icon={Shield}
                     label="Insurance Amount"
-                    value={loanCase.insuranceAmount ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(loanCase.insuranceAmount) : 'N/A'}
+                    value={loanCase.insuranceAmount ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(loanCase.insuranceAmount) : 'N/A'}
                   />
                 </CardContent>
               </Card>

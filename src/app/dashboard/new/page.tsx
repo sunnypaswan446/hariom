@@ -243,9 +243,9 @@ export default function AddLoanCasePage() {
                     name="salary"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Salary (Annual)</FormLabel>
+                        <FormLabel>Salary (Monthly)</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="60000" {...field} />
+                          <Input type="number" placeholder="50000" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -319,7 +319,7 @@ export default function AddLoanCasePage() {
                       <FormItem>
                         <FormLabel>Required Loan Amount</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="5000" {...field} />
+                          <Input type="number" placeholder="500000" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -345,7 +345,7 @@ export default function AddLoanCasePage() {
                       <FormItem>
                         <FormLabel>Obligation</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="500" {...field} />
+                          <Input type="number" placeholder="5000" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
