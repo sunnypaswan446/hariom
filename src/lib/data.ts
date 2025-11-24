@@ -1,5 +1,5 @@
 
-import type { LoanCase, Officer, LoanType, JobProfile, CaseStatus, DocumentType, BankName } from './types';
+import type { LoanCase, Officer, LoanType, JobProfile, CaseStatus, DocumentType, BankName, CaseType } from './types';
 
 export const OFFICERS: Officer[] = [
   'John Doe',
@@ -66,6 +66,9 @@ export const BANK_NAMES: BankName[] = [
   "Shriram Finance Ltd.",
   "Cholamandalam Investment & Finance",
   "Muthoot Finance Ltd.",
+  "Fullerton India",
+  "IIFL Finance",
+  "Hero FinCorp",
   "Other"
 ];
 

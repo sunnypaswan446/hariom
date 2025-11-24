@@ -53,6 +53,9 @@ export type BankName =
   | "Shriram Finance Ltd."
   | "Cholamandalam Investment & Finance"
   | "Muthoot Finance Ltd."
+  | "Fullerton India"
+  | "IIFL Finance"
+  | "Hero FinCorp"
   | "Other";
 
 
