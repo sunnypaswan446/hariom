@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 
 import { loanCaseSchema } from '@/lib/schema';
 import { useLoanStore } from '@/lib/store';
-import { LOAN_TYPES, OFFICERS, JOB_PROFILES, STATUS_OPTIONS, DOCUMENT_TYPES, CASE_TYPES } from '@/lib/data';
+import { LOAN_TYPES, OFFICERS, JOB_PROFILES, STATUS_OPTIONS, DOCUMENT_TYPES, CASE_TYPES, BANK_NAMES } from '@/lib/data';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -67,7 +67,6 @@ export default function AddLoanCasePage() {
       jobDesignation: '',
       referenceName: '',
       status: 'Document Pending',
-      bankName: '',
       bankOfficeSm: '',
       documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: false, file: null })),
       tenure: 0,
@@ -522,9 +521,23 @@ export default function AddLoanCasePage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Bank Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., Central Bank" {...field} />
-                          </FormControl>
+                           <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select a bank" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {BANK_NAMES.map((bank) => (
+                                  <SelectItem key={bank} value={bank}>
+                                    {bank}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -612,5 +625,3 @@ export default function AddLoanCasePage() {
     </>
   );
 }
-
-    

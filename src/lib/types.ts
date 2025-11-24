@@ -36,6 +36,61 @@ export interface LoanCaseDocument {
   file?: File | null;
 }
 
+export type BankName = 
+  // Public Sector Banks
+  | "State Bank of India"
+  | "Punjab National Bank"
+  | "Bank of Baroda"
+  | "Canara Bank"
+  | "Union Bank of India"
+  | "Bank of India"
+  | "Indian Bank"
+  | "Central Bank of India"
+  | "Indian Overseas Bank"
+  | "UCO Bank"
+  | "Bank of Maharashtra"
+  | "Punjab & Sind Bank"
+  // Private Sector Banks
+  | "HDFC Bank"
+  | "ICICI Bank"
+  | "Axis Bank"
+  | "Kotak Mahindra Bank"
+  | "IndusInd Bank"
+  | "Yes Bank"
+  | "Federal Bank"
+  | "IDFC First Bank"
+  | "RBL Bank"
+  | "Bandhan Bank"
+  | "CSB Bank"
+  | "DCB Bank"
+  | "Dhanlaxmi Bank"
+  | "Jammu & Kashmir Bank"
+  | "Karnataka Bank"
+  | "Karur Vysya Bank"
+  | "Nainital Bank"
+  | "South Indian Bank"
+  | "Tamilnad Mercantile Bank"
+  | "City Union Bank"
+  // NBFCs
+  | "Bajaj Finance"
+  | "HDB Financial Services"
+  | "Tata Capital"
+  | "Mahindra & Mahindra Financial Services"
+  | "L&T Finance"
+  | "Muthoot Finance"
+  | "Cholamandalam Investment and Finance Company"
+  | "Shriram Transport Finance Company"
+  | "Aditya Birla Finance"
+  | "Fullerton India"
+  | "Poonawalla Fincorp"
+  // Other / Small Finance Banks
+  | "AU Small Finance Bank"
+  | "Equitas Small Finance Bank"
+  | "Ujjivan Small Finance Bank"
+  | "Jana Small Finance Bank"
+  | "Other";
+
+
 export interface LoanCase {
   id: string;
   applicantName: string;
@@ -57,7 +112,7 @@ export interface LoanCase {
   jobProfile: JobProfile;
   jobDesignation: string;
   referenceName: string;
-  bankName: string;
+  bankName: BankName;
   bankOfficeSm: string;
   documents: LoanCaseDocument[];
   tenure: number;

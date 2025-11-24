@@ -1,5 +1,5 @@
 
-import type { LoanCase, Officer, LoanType, JobProfile, CaseStatus, DocumentType, CaseType } from './types';
+import type { LoanCase, Officer, LoanType, JobProfile, CaseStatus, DocumentType, CaseType, BankName } from './types';
 
 export const OFFICERS: Officer[] = [
   'John Doe',
@@ -49,6 +49,62 @@ export const DOCUMENT_TYPES: DocumentType[] = [
   'Loan Tracks',
 ];
 
+export const BANK_NAMES: BankName[] = [
+  // Public Sector Banks
+  "State Bank of India",
+  "Punjab National Bank",
+  "Bank of Baroda",
+  "Canara Bank",
+  "Union Bank of India",
+  "Bank of India",
+  "Indian Bank",
+  "Central Bank of India",
+  "Indian Overseas Bank",
+  "UCO Bank",
+  "Bank of Maharashtra",
+  "Punjab & Sind Bank",
+  // Private Sector Banks
+  "HDFC Bank",
+  "ICICI Bank",
+  "Axis Bank",
+  "Kotak Mahindra Bank",
+  "IndusInd Bank",
+  "Yes Bank",
+  "Federal Bank",
+  "IDFC First Bank",
+  "RBL Bank",
+  "Bandhan Bank",
+  "CSB Bank",
+  "DCB Bank",
+  "Dhanlaxmi Bank",
+  "Jammu & Kashmir Bank",
+  "Karnataka Bank",
+  "Karur Vysya Bank",
+  "Nainital Bank",
+  "South Indian Bank",
+  "Tamilnad Mercantile Bank",
+"City Union Bank",
+  // NBFCs
+  "Bajaj Finance",
+  "HDB Financial Services",
+  "Tata Capital",
+  "Mahindra & Mahindra Financial Services",
+  "L&T Finance",
+  "Muthoot Finance",
+  "Cholamandalam Investment and Finance Company",
+  "Shriram Transport Finance Company",
+  "Aditya Birla Finance",
+  "Fullerton India",
+  "Poonawalla Fincorp",
+  // Other / Small Finance Banks
+  "AU Small Finance Bank",
+  "Equitas Small Finance Bank",
+  "Ujjivan Small Finance Bank",
+  "Jana Small Finance Bank",
+  "Other"
+];
+
+
 export const INITIAL_CASES: LoanCase[] = [
   {
     id: 'LC-001',
@@ -74,7 +130,7 @@ export const INITIAL_CASES: LoanCase[] = [
     jobProfile: 'Private',
     jobDesignation: 'Software Engineer',
     referenceName: 'Bob Johnson',
-    bankName: 'Anytown Bank',
+    bankName: 'HDFC Bank',
     bankOfficeSm: 'SM-1',
     documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: true })),
     tenure: 24,
@@ -108,7 +164,7 @@ export const INITIAL_CASES: LoanCase[] = [
     jobProfile: 'Government',
     jobDesignation: 'Project Manager',
     referenceName: 'Carol Williams',
-    bankName: 'Oakwood Bank',
+    bankName: 'State Bank of India',
     bankOfficeSm: 'SM-2',
     documents: DOCUMENT_TYPES.map((type, i) => ({ type, uploaded: i < 2 })),
     tenure: 240,
@@ -135,7 +191,7 @@ export const INITIAL_CASES: LoanCase[] = [
     jobProfile: 'Business',
     jobDesignation: 'Small Business Owner',
     referenceName: 'Sally Brown',
-    bankName: 'Pine Bank',
+    bankName: 'ICICI Bank',
     bankOfficeSm: 'SM-1',
     documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: false })),
     tenure: 48,
@@ -165,7 +221,7 @@ export const INITIAL_CASES: LoanCase[] = [
     jobProfile: 'Business',
     jobDesignation: 'CEO',
     referenceName: 'Steve Trevor',
-    bankName: 'Metropolis First Bank',
+    bankName: 'Axis Bank',
     bankOfficeSm: 'SM-3',
     documents: DOCUMENT_TYPES.map((type, i) => ({ type, uploaded: i < 4 })),
     tenure: 60,
@@ -196,7 +252,7 @@ export const INITIAL_CASES: LoanCase[] = [
     jobProfile: 'Government',
     jobDesignation: 'Field Agent',
     referenceName: 'Luther Stickell',
-    bankName: 'Global Bank',
+    bankName: 'Bajaj Finance',
     bankOfficeSm: 'SM-4',
     documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: true })),
     tenure: 12,
@@ -231,7 +287,7 @@ export const INITIAL_CASES: LoanCase[] = [
     jobProfile: 'Private',
     jobDesignation: 'Student',
     referenceName: 'Michael Westen',
-    bankName: 'Miami Credit Union',
+    bankName: 'Ujjivan Small Finance Bank',
     bankOfficeSm: 'SM-2',
     documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: true })),
     tenure: 60,
@@ -263,7 +319,7 @@ export const INITIAL_CASES: LoanCase[] = [
     jobProfile: 'Private',
     jobDesignation: 'Architect',
     referenceName: 'Jerry Seinfeld',
-    bankName: 'Vandelay Industries Bank',
+    bankName: 'Other',
     bankOfficeSm: 'SM-3',
     documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: false })),
     tenure: 12,

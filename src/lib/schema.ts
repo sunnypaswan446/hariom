@@ -1,6 +1,6 @@
 
 import { z } from 'zod';
-import { LOAN_TYPES, OFFICERS, STATUS_OPTIONS, DOCUMENT_TYPES, CASE_TYPES } from './data';
+import { LOAN_TYPES, OFFICERS, STATUS_OPTIONS, DOCUMENT_TYPES, CASE_TYPES, BANK_NAMES } from './data';
 
 const phoneRegex = new RegExp(
   /^([+]?[\s0-9]+)?(\d{3}|[(]\d{3}[)])?[\s-]?(\d{3})[\s-]?(\d{4})$/
@@ -57,7 +57,9 @@ export const loanCaseSchema = z.object({
   }),
   jobDesignation: z.string().min(2, { message: 'Job designation is required.' }),
   referenceName: z.string().min(2, { message: 'Reference name is required.' }),
-  bankName: z.string().min(2, { message: 'Bank name is required.' }),
+  bankName: z.enum(BANK_NAMES, {
+    errorMap: () => ({ message: 'Please select a valid bank.' }),
+  }),
   bankOfficeSm: z.string().min(2, { message: 'Bank Office/SM is required.' }),
   documents: z.array(z.object({
     type: z.enum(DOCUMENT_TYPES),
