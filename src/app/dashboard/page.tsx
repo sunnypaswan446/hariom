@@ -87,7 +87,6 @@ export default function DashboardPage() {
   
   const stats = useMemo(() => {
     return {
-      total: filteredCases.length,
       complete: filteredCases.filter((c) => c.status === 'Complete').length,
       login: filteredCases.filter((c) => c.status === 'Login').length,
       inProgress: filteredCases.filter((c) => c.status === 'In Progress').length,
@@ -114,16 +113,7 @@ export default function DashboardPage() {
         </Button>
       </PageHeader>
       
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-6 mb-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Cases</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
-          </CardContent>
-        </Card>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5 mb-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Complete</CardTitle>
@@ -348,3 +338,5 @@ export default function DashboardPage() {
     </>
   );
 }
+
+    
