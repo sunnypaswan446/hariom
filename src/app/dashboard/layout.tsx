@@ -97,16 +97,7 @@ export default function DashboardLayout({
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
-          <div className="flex items-center gap-3 p-2">
-            <Avatar>
-              <AvatarImage src="https://picsum.photos/seed/user/40/40" />
-              <AvatarFallback>U</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col text-sm group-data-[collapsible=icon]:hidden">
-              <span className="font-semibold text-foreground">Admin User</span>
-              <span className="text-muted-foreground">admin@loanflow.com</span>
-            </div>
-          </div>
+          
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
