@@ -276,8 +276,7 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-
-          <div className="overflow-x-auto">
+          <div className="relative w-full overflow-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -371,4 +370,4 @@ export default function DashboardPage() {
       </Card>
     </>
   );
-}
+ 
