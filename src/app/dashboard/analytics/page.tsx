@@ -32,6 +32,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { format, parseISO } from 'date-fns';
+import { Calendar } from '@/components/ui/calendar';
 
 const statusOrder: CaseStatus[] = [
   'Pending',
@@ -371,5 +372,3 @@ export default function AnalyticsPage() {
     </>
   );
 }
-
-    
