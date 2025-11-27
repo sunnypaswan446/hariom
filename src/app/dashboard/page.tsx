@@ -32,12 +32,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { MoreHorizontal, PlusCircle, Download, Search, Calendar as CalendarIcon } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Download, Search, Calendar as CalendarIcon, CheckCircle, Clock, FileText } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
 import { StatusBadge } from '@/components/dashboard/status-badge';
 import type { CaseStatus, LoanCase, Officer } from '@/lib/types';
 import { STATUS_OPTIONS } from '@/lib/data';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
@@ -84,6 +84,17 @@ export default function DashboardPage() {
       return searchMatch && statusMatch && officerMatch && dateMatch;
     });
   }, [cases, searchTerm, statusFilter, officerFilter, dateRange]);
+  
+  const stats = useMemo(() => {
+    return {
+      total: filteredCases.length,
+      complete: filteredCases.filter((c) => c.status === 'Complete').length,
+      login: filteredCases.filter((c) => c.status === 'Login').length,
+      inProgress: filteredCases.filter((c) => c.status === 'In Progress').length,
+      approved: filteredCases.filter((c) => c.status === 'Approved').length,
+      disbursed: filteredCases.filter((c) => c.status === 'Disbursed').length,
+    };
+  }, [filteredCases]);
 
   return (
     <>
@@ -102,6 +113,63 @@ export default function DashboardPage() {
           Export
         </Button>
       </PageHeader>
+      
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-6 mb-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Cases</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.total}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Complete</CardTitle>
+            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.complete}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Login</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.login}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">In Progress</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.inProgress}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Approved</CardTitle>
+            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.approved}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Disbursed</CardTitle>
+            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.disbursed}</div>
+          </CardContent>
+        </Card>
+      </div>
 
       <Card>
         <CardContent className="p-0">
