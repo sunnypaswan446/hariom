@@ -12,8 +12,6 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent,
 } from '@/components/ui/chart';
 import {
   Bar,
@@ -21,9 +19,6 @@ import {
   XAxis,
   YAxis,
   ResponsiveContainer,
-  Pie,
-  PieChart,
-  Line,
   AreaChart,
   Area,
   BarChart
@@ -48,6 +43,7 @@ export default function AnalyticsPage() {
 
   const cases = useMemo(() => {
     return allCases.filter((c) => {
+      if (!c.applicationDate) return false;
       const applicationDate = parseISO(c.applicationDate);
       const dateMatch =
         !dateRange ||
@@ -79,15 +75,6 @@ export default function AnalyticsPage() {
       status,
       count: counts[status] || 0,
     }));
-  }, [cases]);
-
-  const loanTypesData = useMemo(() => {
-    const counts = cases.reduce((acc, c) => {
-      acc[c.loanType] = (acc[c.loanType] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-    return Object.entries(counts).map(([name, value]) => ({ name, value }));
   }, [cases]);
 
   const casesOverTime = useMemo(() => {
@@ -230,8 +217,8 @@ export default function AnalyticsPage() {
         </Card>
       </div>
 
-      <div className="grid gap-6 mt-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
+      <div className="grid gap-6 mt-6 md:grid-cols-1">
+        <Card>
           <CardHeader>
             <CardTitle>Cases Added Over Time</CardTitle>
           </CardHeader>
@@ -252,56 +239,6 @@ export default function AnalyticsPage() {
                     name="Cases"
                   />
                 </AreaChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Loan Types Distribution</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer config={{}} className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
-                  <Pie
-                    data={loanTypesData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    innerRadius={60}
-                    fill="var(--color-primary)"
-                    labelLine={false}
-                    label={({
-                      cx,
-                      cy,
-                      midAngle,
-                      innerRadius,
-                      outerRadius,
-                      percent,
-                    }) => {
-                      const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-                      const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180));
-                      const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180));
-                      return (
-                        <text
-                          x={x}
-                          y={y}
-                          fill="hsl(var(--primary-foreground))"
-                          textAnchor={x > cx ? 'start' : 'end'}
-                          dominantBaseline="central"
-                          className="text-xs font-medium"
-                        >
-                          {`${(percent * 100).toFixed(0)}%`}
-                        </text>
-                      );
-                    }}
-                  />
-                   <ChartLegend content={<ChartLegendContent nameKey="name" />} />
-                </PieChart>
               </ResponsiveContainer>
             </ChartContainer>
           </CardContent>
