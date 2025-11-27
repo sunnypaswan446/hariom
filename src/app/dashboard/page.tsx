@@ -32,18 +32,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { MoreHorizontal, PlusCircle, Download, Search, Calendar as CalendarIcon, CheckCircle, Clock, FileText } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Download, Search, CheckCircle, Clock } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
 import { StatusBadge } from '@/components/dashboard/status-badge';
 import type { CaseStatus, LoanCase, Officer } from '@/lib/types';
 import { STATUS_OPTIONS } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { format, parseISO } from 'date-fns';
-import { cn } from '@/lib/utils';
-import type { DateRange } from 'react-day-picker';
+import { parseISO, startOfMonth, endOfMonth, getYear, getMonth } from 'date-fns';
+
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+const getYears = () => {
+    const currentYear = new Date().getFullYear();
+    const years = [];
+    for (let i = currentYear; i >= currentYear - 10; i--) {
+        years.push(i);
+    }
+    return years;
+};
 
 export default function DashboardPage() {
   const { cases, updateCaseStatus, officers } = useLoanStore();
@@ -52,7 +62,16 @@ export default function DashboardPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
   const [officerFilter, setOfficerFilter] = useState<Officer | 'all'>('all');
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+
+  const currentYear = getYear(new Date());
+  const currentMonth = getMonth(new Date());
+
+  const [fromMonth, setFromMonth] = useState<number>(currentMonth);
+  const [fromYear, setFromYear] = useState<number>(currentYear);
+  const [toMonth, setToMonth] = useState<number>(currentMonth);
+  const [toYear, setToYear] = useState<number>(currentYear);
+  
+  const years = useMemo(() => getYears(), []);
 
 
   const handleStatusChange = (caseId: string, newStatus: CaseStatus) => {
@@ -64,6 +83,9 @@ export default function DashboardPage() {
   };
 
   const filteredCases = useMemo(() => {
+    const fromDate = startOfMonth(new Date(fromYear, fromMonth));
+    const toDate = endOfMonth(new Date(toYear, toMonth));
+
     return cases.filter((c) => {
       const searchMatch =
         c.applicantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -74,26 +96,27 @@ export default function DashboardPage() {
         officerFilter === 'all' || c.teamMember === officerFilter;
       
       const applicationDate = parseISO(c.applicationDate);
-      const dateMatch =
-        !dateRange ||
-        (!dateRange.from && !dateRange.to) ||
-        (dateRange.from && !dateRange.to && applicationDate >= dateRange.from) ||
-        (!dateRange.from && dateRange.to && applicationDate <= dateRange.to) ||
-        (dateRange.from && dateRange.to && applicationDate >= dateRange.from && applicationDate <= dateRange.to);
+      const dateMatch = applicationDate >= fromDate && applicationDate <= toDate;
 
       return searchMatch && statusMatch && officerMatch && dateMatch;
     });
-  }, [cases, searchTerm, statusFilter, officerFilter, dateRange]);
+  }, [cases, searchTerm, statusFilter, officerFilter, fromMonth, fromYear, toMonth, toYear]);
   
   const stats = useMemo(() => {
+    const relevantCases = cases.filter(c => {
+        const fromDate = startOfMonth(new Date(fromYear, fromMonth));
+        const toDate = endOfMonth(new Date(toYear, toMonth));
+        const applicationDate = parseISO(c.applicationDate);
+        return applicationDate >= fromDate && applicationDate <= toDate;
+    });
     return {
-      complete: filteredCases.filter((c) => c.status === 'Complete').length,
-      login: filteredCases.filter((c) => c.status === 'Login').length,
-      inProgress: filteredCases.filter((c) => c.status === 'In Progress').length,
-      approved: filteredCases.filter((c) => c.status === 'Approved').length,
-      disbursed: filteredCases.filter((c) => c.status === 'Disbursed').length,
+      complete: relevantCases.filter((c) => c.status === 'Complete').length,
+      login: relevantCases.filter((c) => c.status === 'Login').length,
+      inProgress: relevantCases.filter((c) => c.status === 'In Progress').length,
+      approved: relevantCases.filter((c) => c.status === 'Approved').length,
+      disbursed: relevantCases.filter((c) => c.status === 'Disbursed').length,
     };
-  }, [filteredCases]);
+  }, [cases, fromMonth, fromYear, toMonth, toYear]);
 
   return (
     <>
@@ -204,42 +227,32 @@ export default function DashboardPage() {
                   ))}
                 </SelectContent>
               </Select>
-               <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    id="date"
-                    variant={"outline"}
-                    className={cn(
-                      "w-full md:w-auto justify-start text-left font-normal",
-                      !dateRange && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {dateRange?.from ? (
-                      dateRange.to ? (
-                        <>
-                          {format(dateRange.from, "LLL dd, y")} -{" "}
-                          {format(dateRange.to, "LLL dd, y")}
-                        </>
-                      ) : (
-                        format(dateRange.from, "LLL dd, y")
-                      )
-                    ) : (
-                      <span>Pick a date range</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    initialFocus
-                    mode="range"
-                    defaultMonth={dateRange?.from}
-                    selected={dateRange}
-                    onSelect={setDateRange}
-                    numberOfMonths={1}
-                  />
-                </PopoverContent>
-              </Popover>
+              <div className="flex w-full flex-col md:flex-row gap-2">
+                  <Select value={String(fromMonth)} onValueChange={(v) => setFromMonth(Number(v))}>
+                    <SelectTrigger><SelectValue placeholder="From Month" /></SelectTrigger>
+                    <SelectContent>
+                      {MONTHS.map((m, i) => <SelectItem key={i} value={String(i)}>{m}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                   <Select value={String(fromYear)} onValueChange={(v) => setFromYear(Number(v))}>
+                    <SelectTrigger><SelectValue placeholder="From Year" /></SelectTrigger>
+                    <SelectContent>
+                      {years.map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={String(toMonth)} onValueChange={(v) => setToMonth(Number(v))}>
+                    <SelectTrigger><SelectValue placeholder="To Month" /></SelectTrigger>
+                    <SelectContent>
+                      {MONTHS.map((m, i) => <SelectItem key={i} value={String(i)}>{m}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <Select value={String(toYear)} onValueChange={(v) => setToYear(Number(v))}>
+                    <SelectTrigger><SelectValue placeholder="To Year" /></SelectTrigger>
+                    <SelectContent>
+                      {years.map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+              </div>
             </div>
           </div>
 
@@ -338,5 +351,3 @@ export default function DashboardPage() {
     </>
   );
 }
-
-    

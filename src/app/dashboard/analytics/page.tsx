@@ -6,7 +6,7 @@ import type { DateRange } from 'react-day-picker';
 import { useLoanStore } from '@/lib/store';
 import { PageHeader } from '@/components/page-header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart2, CheckCircle, Clock, FileText, XCircle, Calendar as CalendarIcon, DollarSign } from 'lucide-react';
+import { CheckCircle, Clock, FileText, XCircle, DollarSign } from 'lucide-react';
 import type { CaseStatus } from '@/lib/types';
 import {
   ChartContainer,
@@ -23,11 +23,8 @@ import {
   Area,
   BarChart
 } from 'recharts';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { format, parseISO } from 'date-fns';
-import { Calendar } from '@/components/ui/calendar';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { format, parseISO, getYear, getMonth, startOfMonth, endOfMonth } from 'date-fns';
 
 const statusOrder: CaseStatus[] = [
   'Pending',
@@ -37,23 +34,45 @@ const statusOrder: CaseStatus[] = [
   'Rejected',
 ];
 
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+const getYears = () => {
+    const currentYear = new Date().getFullYear();
+    const years = [];
+    for (let i = currentYear; i >= currentYear - 10; i--) {
+        years.push(i);
+    }
+    return years;
+};
+
+
 export default function AnalyticsPage() {
   const allCases = useLoanStore((state) => state.cases);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+  
+  const currentYear = getYear(new Date());
+  const currentMonth = getMonth(new Date());
+
+  const [fromMonth, setFromMonth] = useState<number>(currentMonth);
+  const [fromYear, setFromYear] = useState<number>(currentYear);
+  const [toMonth, setToMonth] = useState<number>(currentMonth);
+  const [toYear, setToYear] = useState<number>(currentYear);
+  
+  const years = useMemo(() => getYears(), []);
+
 
   const cases = useMemo(() => {
+    const fromDate = startOfMonth(new Date(fromYear, fromMonth));
+    const toDate = endOfMonth(new Date(toYear, toMonth));
     return allCases.filter((c) => {
       if (!c.applicationDate) return false;
       const applicationDate = parseISO(c.applicationDate);
-      const dateMatch =
-        !dateRange ||
-        (!dateRange.from && !dateRange.to) ||
-        (dateRange.from && !dateRange.to && applicationDate >= dateRange.from) ||
-        (!dateRange.from && dateRange.to && applicationDate <= dateRange.to) ||
-        (dateRange.from && dateRange.to && applicationDate >= dateRange.from && applicationDate <= dateRange.to);
+      const dateMatch = applicationDate >= fromDate && applicationDate <= toDate;
       return dateMatch;
     });
-  }, [allCases, dateRange]);
+  }, [allCases, fromMonth, fromYear, toMonth, toYear]);
 
 
   const stats = useMemo(() => {
@@ -141,42 +160,32 @@ export default function AnalyticsPage() {
         title="Analytics Dashboard"
         description="Visualize loan case data and key performance metrics."
       >
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              id="date"
-              variant={"outline"}
-              className={cn(
-                "w-full md:w-auto justify-start text-left font-normal",
-                !dateRange && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {dateRange?.from ? (
-                dateRange.to ? (
-                  <>
-                    {format(dateRange.from, "LLL dd, y")} -{" "}
-                    {format(dateRange.to, "LLL dd, y")}
-                  </>
-                ) : (
-                  format(dateRange.from, "LLL dd, y")
-                )
-              ) : (
-                <span>Pick a date range</span>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="end">
-            <Calendar
-              initialFocus
-              mode="range"
-              defaultMonth={dateRange?.from}
-              selected={dateRange}
-              onSelect={setDateRange}
-              numberOfMonths={1}
-            />
-          </PopoverContent>
-        </Popover>
+        <div className="flex w-full flex-col md:flex-row gap-2">
+            <Select value={String(fromMonth)} onValueChange={(v) => setFromMonth(Number(v))}>
+              <SelectTrigger><SelectValue placeholder="From Month" /></SelectTrigger>
+              <SelectContent>
+                {MONTHS.map((m, i) => <SelectItem key={i} value={String(i)}>{m}</SelectItem>)}
+              </SelectContent>
+            </Select>
+              <Select value={String(fromYear)} onValueChange={(v) => setFromYear(Number(v))}>
+              <SelectTrigger><SelectValue placeholder="From Year" /></SelectTrigger>
+              <SelectContent>
+                {years.map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={String(toMonth)} onValueChange={(v) => setToMonth(Number(v))}>
+              <SelectTrigger><SelectValue placeholder="To Month" /></SelectTrigger>
+              <SelectContent>
+                {MONTHS.map((m, i) => <SelectItem key={i} value={String(i)}>{m}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={String(toYear)} onValueChange={(v) => setToYear(Number(v))}>
+              <SelectTrigger><SelectValue placeholder="To Year" /></SelectTrigger>
+              <SelectContent>
+                {years.map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
+              </SelectContent>
+            </Select>
+        </div>
       </PageHeader>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
