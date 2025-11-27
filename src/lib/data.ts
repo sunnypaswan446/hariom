@@ -294,6 +294,77 @@ export const INITIAL_CASES: LoanCase[] = [
     tenure: 12,
     obligation: 100,
   },
+  ...Array.from({ length: 300 }, (_, i) => {
+    const caseNum = i + 8;
+    const loanType = LOAN_TYPES[Math.floor(Math.random() * LOAN_TYPES.length)];
+    const status = STATUS_OPTIONS[Math.floor(Math.random() * STATUS_OPTIONS.length)];
+    const teamMember = OFFICERS[Math.floor(Math.random() * OFFICERS.length)];
+    const jobProfile = JOB_PROFILES[Math.floor(Math.random() * JOB_PROFILES.length)];
+    const bankName = BANK_NAMES[Math.floor(Math.random() * (BANK_NAMES.length-1))];
+    const caseType = CASE_TYPES[Math.floor(Math.random() * CASE_TYPES.length)];
+    const applicationDate = new Date(Date.now() - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000));
+    const dob = new Date(new Date().setFullYear(new Date().getFullYear() - 22 - Math.floor(Math.random() * 30)), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
+    const loanAmount = Math.floor(Math.random() * 495001) + 5000;
+    const tenure = (Math.floor(Math.random() * 7) + 1) * 12;
+    
+    let approvedAmount, roi, approvedTenure, processingFee, insuranceAmount;
+    if (status === 'Approved' || status === 'Disbursed') {
+      approvedAmount = loanAmount - Math.floor(Math.random() * (loanAmount * 0.1));
+      roi = Math.round((Math.random() * 10 + 5) * 10) / 10;
+      approvedTenure = tenure;
+      processingFee = Math.floor(Math.random() * 5000);
+      insuranceAmount = Math.floor(Math.random() * 1000);
+    }
+
+    const firstHistoryTimestamp = applicationDate.getTime() + (24 * 60 * 60 * 1000);
+    const history = [{
+        timestamp: new Date(firstHistoryTimestamp).toISOString(),
+        status: 'In Progress' as CaseStatus,
+        remarks: 'Initial review started.'
+    }];
+
+    if (status !== 'Document Pending' && status !== 'In Progress') {
+        const secondHistoryTimestamp = firstHistoryTimestamp + (2 * 24 * 60 * 60 * 1000);
+        history.push({
+            timestamp: new Date(secondHistoryTimestamp).toISOString(),
+            status: status,
+            remarks: `Case moved to ${status}.`
+        })
+    }
+
+    return {
+      id: `LC-${String(caseNum).padStart(3, '0')}`,
+      applicantName: `User ${caseNum}`,
+      loanAmount,
+      loanType,
+      caseType,
+      contactNumber: `${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`,
+      email: `user.${caseNum}@example.com`,
+      address: `${caseNum} Random St, Fake City`,
+      applicationDate: applicationDate.toISOString().split('T')[0],
+      teamMember,
+      status,
+      notes: 'This is a dummy case.',
+      history,
+      salary: Math.floor(Math.random() * 200000) + 30000,
+      location: 'Random City',
+      dob: dob.toISOString().split('T')[0],
+      panCardNumber: `DUMMY${String(caseNum).padStart(4, '0')}Z`,
+      jobProfile,
+      jobDesignation: 'Dummy Role',
+      referenceName: `Reference ${caseNum}`,
+      bankName,
+      bankOfficeSm: `SM-${Math.floor(Math.random() * 5) + 1}`,
+      documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: Math.random() > 0.3 })),
+      tenure,
+      obligation: Math.floor(Math.random() * 5000),
+      approvedAmount,
+      roi,
+      approvedTenure,
+      processingFee,
+      insuranceAmount,
+    };
+  })
 ];
 
     
