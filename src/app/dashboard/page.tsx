@@ -152,7 +152,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">Complete</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-2">
             <div className="text-2xl font-bold">{stats.complete}</div>
           </CardContent>
         </Card>
@@ -161,7 +161,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">Login</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-2">
             <div className="text-2xl font-bold">{stats.login}</div>
           </CardContent>
         </Card>
@@ -170,7 +170,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">In Progress</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-2">
             <div className="text-2xl font-bold">{stats.inProgress}</div>
           </CardContent>
         </Card>
@@ -179,7 +179,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">Approved</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-2">
             <div className="text-2xl font-bold">{stats.approved}</div>
           </CardContent>
         </Card>
@@ -188,7 +188,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">Disbursed</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-2">
             <div className="text-2xl font-bold">{stats.disbursed}</div>
           </CardContent>
         </Card>
