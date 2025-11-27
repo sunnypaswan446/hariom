@@ -100,7 +100,7 @@ export default function DashboardPage() {
       const searchMatch =
         c.applicantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         c.contactNumber.includes(searchTerm) ||
-        c.loanType.toLowerCase().includes(searchTerm.toLowerCase());
+        c.caseType.toLowerCase().includes(searchTerm.toLowerCase());
       const statusMatch = statusFilter === 'all' || c.status === statusFilter;
       const officerMatch =
         officerFilter === 'all' || c.teamMember === officerFilter;
@@ -200,7 +200,7 @@ export default function DashboardPage() {
              <div className="relative w-full">
                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                <Input
-                placeholder="Search by name, phone, or loan type..."
+                placeholder="Search by name, phone, or case type..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 w-full"
@@ -282,7 +282,7 @@ export default function DashboardPage() {
                 <TableRow>
                   <TableHead>Applicant Name</TableHead>
                   <TableHead className="text-right">Required Loan Amount</TableHead>
-                  <TableHead>Loan Type</TableHead>
+                  <TableHead>Case Type</TableHead>
                   <TableHead>Application Date</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>
@@ -307,7 +307,7 @@ export default function DashboardPage() {
                           currency: 'INR',
                         }).format(loanCase.loanAmount)}
                       </TableCell>
-                      <TableCell>{loanCase.loanType}</TableCell>
+                      <TableCell>{loanCase.caseType}</TableCell>
                       <TableCell>
                         {format(parseISO(loanCase.applicationDate), 'dd-MMM-yyyy')}
                       </TableCell>
@@ -371,3 +371,4 @@ export default function DashboardPage() {
     </>
   );
  
+    
