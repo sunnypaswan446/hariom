@@ -136,7 +136,7 @@ export default function DashboardPage() {
         </Button>
       </PageHeader>
       
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5 mb-6">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5 mb-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Complete</CardTitle>
@@ -196,62 +196,69 @@ export default function DashboardPage() {
                 className="pl-10 w-full"
               />
             </div>
-            <div className="flex flex-col md:flex-row items-center gap-2">
-              <Select
-                value={statusFilter}
-                onValueChange={(value) => setStatusFilter(value as any)}
-              >
-                <SelectTrigger className="w-full md:w-[180px]">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  {STATUS_OPTIONS.map((status) => (
-                     <SelectItem key={status} value={status}>{status}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select
-                value={officerFilter}
-                onValueChange={(value) => setOfficerFilter(value as any)}
-              >
-                <SelectTrigger className="w-full md:w-[180px]">
-                  <SelectValue placeholder="Filter by Team Member" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Team Members</SelectItem>
-                  {officers.map((officer) => (
-                    <SelectItem key={officer} value={officer}>
-                      {officer}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div className="flex w-full flex-col md:flex-row gap-2">
-                  <Select value={String(fromMonth)} onValueChange={(v) => setFromMonth(Number(v))}>
-                    <SelectTrigger><SelectValue placeholder="From Month" /></SelectTrigger>
-                    <SelectContent>
-                      {MONTHS.map((m, i) => <SelectItem key={i} value={String(i)}>{m}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                   <Select value={String(fromYear)} onValueChange={(v) => setFromYear(Number(v))}>
-                    <SelectTrigger><SelectValue placeholder="From Year" /></SelectTrigger>
-                    <SelectContent>
-                      {years.map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  <Select value={String(toMonth)} onValueChange={(v) => setToMonth(Number(v))}>
-                    <SelectTrigger><SelectValue placeholder="To Month" /></SelectTrigger>
-                    <SelectContent>
-                      {MONTHS.map((m, i) => <SelectItem key={i} value={String(i)}>{m}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  <Select value={String(toYear)} onValueChange={(v) => setToYear(Number(v))}>
-                    <SelectTrigger><SelectValue placeholder="To Year" /></SelectTrigger>
-                    <SelectContent>
-                      {years.map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
+            <div className="flex flex-col md:flex-row items-center gap-4">
+              <div className="flex w-full md:w-auto items-center gap-2">
+                <Select
+                  value={statusFilter}
+                  onValueChange={(value) => setStatusFilter(value as any)}
+                >
+                  <SelectTrigger className="w-full md:w-[160px]">
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    {STATUS_OPTIONS.map((status) => (
+                       <SelectItem key={status} value={status}>{status}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={officerFilter}
+                  onValueChange={(value) => setOfficerFilter(value as any)}
+                >
+                  <SelectTrigger className="w-full md:w-[160px]">
+                    <SelectValue placeholder="Filter by Team Member" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Team Members</SelectItem>
+                    {officers.map((officer) => (
+                      <SelectItem key={officer} value={officer}>
+                        {officer}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex w-full flex-col md:flex-row items-center gap-2">
+                  <div className="flex w-full items-center gap-2">
+                    <Select value={String(fromMonth)} onValueChange={(v) => setFromMonth(Number(v))}>
+                      <SelectTrigger className="w-full md:w-auto"><SelectValue placeholder="From Month" /></SelectTrigger>
+                      <SelectContent>
+                        {MONTHS.map((m, i) => <SelectItem key={i} value={String(i)}>{m}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                     <Select value={String(fromYear)} onValueChange={(v) => setFromYear(Number(v))}>
+                      <SelectTrigger className="w-full md:w-auto"><SelectValue placeholder="From Year" /></SelectTrigger>
+                      <SelectContent>
+                        {years.map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <span className="text-sm text-muted-foreground">to</span>
+                  <div className="flex w-full items-center gap-2">
+                    <Select value={String(toMonth)} onValueChange={(v) => setToMonth(Number(v))}>
+                      <SelectTrigger className="w-full md:w-auto"><SelectValue placeholder="To Month" /></SelectTrigger>
+                      <SelectContent>
+                        {MONTHS.map((m, i) => <SelectItem key={i} value={String(i)}>{m}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                    <Select value={String(toYear)} onValueChange={(v) => setToYear(Number(v))}>
+                      <SelectTrigger className="w-full md:w-auto"><SelectValue placeholder="To Year" /></SelectTrigger>
+                      <SelectContent>
+                        {years.map(y => <SelectItem key={y} value={String(y)}>{y}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
               </div>
             </div>
           </div>
