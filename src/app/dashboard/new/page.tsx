@@ -216,8 +216,8 @@ export default function AddLoanCasePage() {
                               }
                               initialFocus
                               captionLayout="dropdown-buttons"
-                              fromYear={1900}
-                              toYear={new Date().getFullYear()}
+                              fromYear={1960}
+                              toYear={new Date().getFullYear() - 18}
                             />
                           </PopoverContent>
                         </Popover>
