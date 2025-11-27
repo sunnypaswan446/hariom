@@ -294,7 +294,7 @@ export const INITIAL_CASES: LoanCase[] = [
     tenure: 12,
     obligation: 100,
   },
-  ...Array.from({ length: 300 }, (_, i) => {
+  ...Array.from({ length: 400 }, (_, i) => {
     const caseNum = i + 8;
     const loanType = LOAN_TYPES[Math.floor(Math.random() * LOAN_TYPES.length)];
     const status = STATUS_OPTIONS[Math.floor(Math.random() * STATUS_OPTIONS.length)];
@@ -303,7 +303,11 @@ export const INITIAL_CASES: LoanCase[] = [
     const bankName = BANK_NAMES[Math.floor(Math.random() * (BANK_NAMES.length-1))];
     const caseType = CASE_TYPES[Math.floor(Math.random() * CASE_TYPES.length)];
     const applicationDate = new Date(Date.now() - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000));
-    const dob = new Date(new Date().setFullYear(new Date().getFullYear() - 22 - Math.floor(Math.random() * 30)), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
+    const year = new Date().getFullYear() - 22 - Math.floor(Math.random() * 30);
+    const month = Math.floor(Math.random() * 12);
+    const day = Math.floor(Math.random() * 28) + 1; // Safely generate days up to 28
+    const dob = new Date(year, month, day);
+
     const loanAmount = Math.floor(Math.random() * 495001) + 5000;
     const tenure = (Math.floor(Math.random() * 7) + 1) * 12;
     
@@ -316,17 +320,17 @@ export const INITIAL_CASES: LoanCase[] = [
       insuranceAmount = Math.floor(Math.random() * 1000);
     }
 
-    const firstHistoryTimestamp = applicationDate.getTime() + (24 * 60 * 60 * 1000);
+    const firstHistoryTimestamp = new Date(applicationDate.getTime() + (24 * 60 * 60 * 1000));
     const history = [{
-        timestamp: new Date(firstHistoryTimestamp).toISOString(),
+        timestamp: firstHistoryTimestamp.toISOString(),
         status: 'In Progress' as CaseStatus,
         remarks: 'Initial review started.'
     }];
 
     if (status !== 'Document Pending' && status !== 'In Progress') {
-        const secondHistoryTimestamp = firstHistoryTimestamp + (2 * 24 * 60 * 60 * 1000);
+        const secondHistoryTimestamp = new Date(firstHistoryTimestamp.getTime() + (2 * 24 * 60 * 60 * 1000));
         history.push({
-            timestamp: new Date(secondHistoryTimestamp).toISOString(),
+            timestamp: secondHistoryTimestamp.toISOString(),
             status: status,
             remarks: `Case moved to ${status}.`
         })
