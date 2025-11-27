@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { Trash2, Pencil, UserPlus, X, Save } from 'lucide-react';
+import { Trash2, Pencil, UserPlus, X, Save, Landmark } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,38 +25,48 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-const teamMemberSchema = z.object({
+const nameSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
 });
-type TeamMemberFormValues = z.infer<typeof teamMemberSchema>;
+type NameFormValues = z.infer<typeof nameSchema>;
 
 export default function SettingsPage() {
   const { toast } = useToast();
-  const { officers, addOfficer, updateOfficer, removeOfficer } = useLoanStore();
+  const { officers, addOfficer, updateOfficer, removeOfficer, banks, addBank, updateBank, removeBank } = useLoanStore();
   const [editingOfficer, setEditingOfficer] = useState<string | null>(null);
+  const [editingBank, setEditingBank] = useState<string | null>(null);
 
-  const form = useForm<TeamMemberFormValues>({
-    resolver: zodResolver(teamMemberSchema),
+  const officerForm = useForm<NameFormValues>({
+    resolver: zodResolver(nameSchema),
     defaultValues: { name: '' },
   });
 
-  const editForm = useForm<TeamMemberFormValues>({
-    resolver: zodResolver(teamMemberSchema),
+  const editOfficerForm = useForm<NameFormValues>({
+    resolver: zodResolver(nameSchema),
   });
 
-  const handleAddOfficer = (data: TeamMemberFormValues) => {
+  const bankForm = useForm<NameFormValues>({
+    resolver: zodResolver(nameSchema),
+    defaultValues: { name: '' },
+  });
+
+  const editBankForm = useForm<NameFormValues>({
+    resolver: zodResolver(nameSchema),
+  });
+
+  const handleAddOfficer = (data: NameFormValues) => {
     if (officers.includes(data.name)) {
-      form.setError('name', { type: 'manual', message: 'This team member already exists.' });
+      officerForm.setError('name', { type: 'manual', message: 'This team member already exists.' });
       return;
     }
     addOfficer(data.name);
     toast({ title: 'Team Member Added', description: `${data.name} has been added.` });
-    form.reset();
+    officerForm.reset();
   };
 
-  const handleUpdateOfficer = (originalName: string, data: TeamMemberFormValues) => {
+  const handleUpdateOfficer = (originalName: string, data: NameFormValues) => {
     if (data.name !== originalName && officers.includes(data.name)) {
-        editForm.setError('name', { type: 'manual', message: 'This team member already exists.' });
+        editOfficerForm.setError('name', { type: 'manual', message: 'This team member already exists.' });
         return;
     }
     updateOfficer(originalName, data.name);
@@ -69,20 +79,57 @@ export default function SettingsPage() {
     toast({ title: 'Team Member Removed', description: `${name} has been removed.`, variant: 'destructive' });
   };
   
-  const startEditing = (name: string) => {
+  const startEditingOfficer = (name: string) => {
     setEditingOfficer(name);
-    editForm.setValue('name', name);
+    editOfficerForm.setValue('name', name);
   };
 
-  const cancelEditing = () => {
+  const cancelEditingOfficer = () => {
     setEditingOfficer(null);
-    editForm.reset();
+    editOfficerForm.reset();
   };
+
+  // Bank Management Handlers
+  const handleAddBank = (data: NameFormValues) => {
+    if (banks.includes(data.name)) {
+      bankForm.setError('name', { type: 'manual', message: 'This bank already exists.' });
+      return;
+    }
+    addBank(data.name);
+    toast({ title: 'Bank Added', description: `${data.name} has been added.` });
+    bankForm.reset();
+  };
+
+  const handleUpdateBank = (originalName: string, data: NameFormValues) => {
+    if (data.name !== originalName && banks.includes(data.name)) {
+        editBankForm.setError('name', { type: 'manual', message: 'This bank already exists.' });
+        return;
+    }
+    updateBank(originalName, data.name);
+    toast({ title: 'Bank Updated', description: `Updated to ${data.name}.` });
+    setEditingBank(null);
+  };
+  
+  const handleRemoveBank = (name: string) => {
+    removeBank(name);
+    toast({ title: 'Bank Removed', description: `${name} has been removed.`, variant: 'destructive' });
+  };
+  
+  const startEditingBank = (name: string) => {
+    setEditingBank(name);
+    editBankForm.setValue('name', name);
+  };
+
+  const cancelEditingBank = () => {
+    setEditingBank(null);
+    editBankForm.reset();
+  };
+
 
   return (
     <>
       <PageHeader title="Settings" description="Manage your application settings." />
-      <div className="grid gap-6">
+      <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Team Members</CardTitle>
@@ -94,10 +141,10 @@ export default function SettingsPage() {
                 {officers.map((officer) => (
                   <div key={officer} className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50">
                     {editingOfficer === officer ? (
-                       <Form {...editForm}>
-                        <form onSubmit={editForm.handleSubmit((data) => handleUpdateOfficer(officer, data))} className="flex items-center gap-2 flex-1">
+                       <Form {...editOfficerForm}>
+                        <form onSubmit={editOfficerForm.handleSubmit((data) => handleUpdateOfficer(officer, data))} className="flex items-center gap-2 flex-1">
                            <FormField
-                              control={editForm.control}
+                              control={editOfficerForm.control}
                               name="name"
                               render={({ field }) => (
                                 <FormItem className="flex-1">
@@ -107,14 +154,14 @@ export default function SettingsPage() {
                               )}
                            />
                           <Button type="submit" size="icon" variant="ghost"><Save className="h-4 w-4" /></Button>
-                          <Button type="button" size="icon" variant="ghost" onClick={cancelEditing}><X className="h-4 w-4" /></Button>
+                          <Button type="button" size="icon" variant="ghost" onClick={cancelEditingOfficer}><X className="h-4 w-4" /></Button>
                         </form>
                       </Form>
                     ) : (
                       <>
                         <p className="font-medium">{officer}</p>
                         <div className="flex items-center gap-1">
-                          <Button variant="ghost" size="icon" onClick={() => startEditing(officer)}>
+                          <Button variant="ghost" size="icon" onClick={() => startEditingOfficer(officer)}>
                             <Pencil className="h-4 w-4" />
                           </Button>
                           <AlertDialog>
@@ -144,10 +191,10 @@ export default function SettingsPage() {
                   </div>
                 ))}
               </div>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(handleAddOfficer)} className="flex items-start gap-2 pt-4 border-t">
+              <Form {...officerForm}>
+                <form onSubmit={officerForm.handleSubmit(handleAddOfficer)} className="flex items-start gap-2 pt-4 border-t">
                   <FormField
-                    control={form.control}
+                    control={officerForm.control}
                     name="name"
                     render={({ field }) => (
                       <FormItem className="flex-1">
@@ -168,7 +215,97 @@ export default function SettingsPage() {
             </div>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Banks</CardTitle>
+            <CardDescription>Add, edit, or remove banks from your workspace.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                {banks.map((bank) => (
+                  <div key={bank} className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50">
+                    {editingBank === bank ? (
+                       <Form {...editBankForm}>
+                        <form onSubmit={editBankForm.handleSubmit((data) => handleUpdateBank(bank, data))} className="flex items-center gap-2 flex-1">
+                           <FormField
+                              control={editBankForm.control}
+                              name="name"
+                              render={({ field }) => (
+                                <FormItem className="flex-1">
+                                  <FormControl><Input {...field} autoFocus /></FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                           />
+                          <Button type="submit" size="icon" variant="ghost"><Save className="h-4 w-4" /></Button>
+                          <Button type="button" size="icon" variant="ghost" onClick={cancelEditingBank}><X className="h-4 w-4" /></Button>
+                        </form>
+                      </Form>
+                    ) : (
+                      <>
+                        <p className="font-medium">{bank}</p>
+                        { bank !== 'Other' && (
+                          <div className="flex items-center gap-1">
+                            <Button variant="ghost" size="icon" onClick={() => startEditingBank(bank)}>
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently remove <strong>{bank}</strong> from the banks list.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction onClick={() => handleRemoveBank(bank)}>
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <Form {...bankForm}>
+                <form onSubmit={bankForm.handleSubmit(handleAddBank)} className="flex items-start gap-2 pt-4 border-t">
+                  <FormField
+                    control={bankForm.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel className="sr-only">New Bank</FormLabel>
+                        <FormControl>
+                           <Input placeholder="Enter new bank name..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit" variant="outline">
+                    <Landmark className="mr-2" />
+                    Add Bank
+                  </Button>
+                </form>
+              </Form>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </>
   );
 }
+
+    

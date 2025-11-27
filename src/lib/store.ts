@@ -3,12 +3,13 @@
 
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import type { LoanCase, CaseStatus, CaseUpdate, Officer } from './types';
-import { INITIAL_CASES, OFFICERS as INITIAL_OFFICERS } from './data';
+import type { LoanCase, CaseStatus, CaseUpdate, Officer, BankName } from './types';
+import { INITIAL_CASES, OFFICERS as INITIAL_OFFICERS, INITIAL_BANK_NAMES } from './data';
 
 type State = {
   cases: LoanCase[];
   officers: Officer[];
+  banks: BankName[];
 };
 
 type Actions = {
@@ -24,12 +25,16 @@ type Actions = {
   addOfficer: (name: Officer) => void;
   updateOfficer: (oldName: Officer, newName: Officer) => void;
   removeOfficer: (name: Officer) => void;
+  addBank: (name: BankName) => void;
+  updateBank: (oldName: BankName, newName: BankName) => void;
+  removeBank: (name: BankName) => void;
 };
 
 export const useLoanStore = create<State & Actions>()(
   immer((set, get) => ({
     cases: INITIAL_CASES,
     officers: INITIAL_OFFICERS,
+    banks: INITIAL_BANK_NAMES,
 
     getCaseById: (id) => {
       return get().cases.find((c) => c.id === id);
@@ -110,6 +115,37 @@ export const useLoanStore = create<State & Actions>()(
         // Optional: decide what to do with cases assigned to the removed officer.
         // For now, we'll leave them as is. A select with a removed officer will just not show that option.
       });
+    },
+
+    addBank: (name) => {
+      set(state => {
+        if (!state.banks.includes(name)) {
+          state.banks.push(name);
+        }
+      });
+    },
+
+    updateBank: (oldName, newName) => {
+      set(state => {
+        const index = state.banks.indexOf(oldName);
+        if (index !== -1) {
+          state.banks[index] = newName;
+          // Also update in existing cases
+          state.cases.forEach(c => {
+            if (c.bankName === oldName) {
+              c.bankName = newName;
+            }
+          });
+        }
+      });
+    },
+
+    removeBank: (name) => {
+      set(state => {
+        state.banks = state.banks.filter(b => b !== name);
+      });
     }
   }))
 );
+
+    

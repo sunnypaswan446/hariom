@@ -1,6 +1,6 @@
 
 import { z } from 'zod';
-import { LOAN_TYPES, STATUS_OPTIONS, DOCUMENT_TYPES, CASE_TYPES, BANK_NAMES } from './data';
+import { LOAN_TYPES, STATUS_OPTIONS, DOCUMENT_TYPES, CASE_TYPES, INITIAL_BANK_NAMES } from './data';
 import { useLoanStore } from './store'; // Cannot do this in schema file
 
 const phoneRegex = new RegExp(
@@ -12,6 +12,8 @@ const panRegex = new RegExp(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/);
 // This is a workaround since we can't use hooks/zustand in this file.
 // In a real app, this list would likely come from an API.
 const getOfficers = () => useLoanStore.getState().officers;
+const getBanks = () => useLoanStore.getState().banks;
+
 
 export const loanCaseSchema = z.object({
   applicantName: z.string().min(2, {
@@ -60,7 +62,7 @@ export const loanCaseSchema = z.object({
   }),
   jobDesignation: z.string().min(2, { message: 'Job designation is required.' }),
   referenceName: z.string().min(2, { message: 'Reference name is required.' }),
-  bankName: z.enum(BANK_NAMES, {
+  bankName: z.string({
     errorMap: () => ({ message: 'Please select a valid bank.' }),
   }),
   otherBankName: z.string().optional(),
@@ -94,3 +96,5 @@ export const statusUpdateSchema = z.object({
   processingFee: z.coerce.number().optional(),
   insuranceAmount: z.coerce.number().optional(),
 });
+
+    

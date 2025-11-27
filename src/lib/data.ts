@@ -49,7 +49,7 @@ export const DOCUMENT_TYPES: DocumentType[] = [
   'Loan Tracks',
 ];
 
-export const BANK_NAMES: BankName[] = [
+export const INITIAL_BANK_NAMES: BankName[] = [
   "HDFC Bank",
   "ICICI Bank",
   "Axis Bank",
@@ -300,7 +300,7 @@ export const INITIAL_CASES: LoanCase[] = [
     const status = STATUS_OPTIONS[Math.floor(Math.random() * STATUS_OPTIONS.length)];
     const teamMember = OFFICERS[Math.floor(Math.random() * OFFICERS.length)];
     const jobProfile = JOB_PROFILES[Math.floor(Math.random() * JOB_PROFILES.length)];
-    const bankName = BANK_NAMES[Math.floor(Math.random() * (BANK_NAMES.length-1))];
+    const bankName = INITIAL_BANK_NAMES[Math.floor(Math.random() * (INITIAL_BANK_NAMES.length-1))];
     const caseType = CASE_TYPES[Math.floor(Math.random() * CASE_TYPES.length)];
     const applicationDate = new Date(Date.now() - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000));
     const year = new Date().getFullYear() - 22 - Math.floor(Math.random() * 30);
@@ -370,5 +370,7 @@ export const INITIAL_CASES: LoanCase[] = [
     };
   })
 ];
+
+    
 
     
