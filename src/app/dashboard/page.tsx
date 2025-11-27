@@ -32,14 +32,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { MoreHorizontal, PlusCircle, Download, Search, CheckCircle, Clock } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Download, Search, CheckCircle, Clock, RotateCcw } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
 import { StatusBadge } from '@/components/dashboard/status-badge';
 import type { CaseStatus, LoanCase, Officer } from '@/lib/types';
 import { STATUS_OPTIONS } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { parseISO, startOfMonth, endOfMonth, getYear, getMonth } from 'date-fns';
+import { parseISO, startOfMonth, endOfMonth, getYear, getMonth, format } from 'date-fns';
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -80,6 +80,16 @@ export default function DashboardPage() {
       title: 'Status Updated',
       description: `Case ${caseId} has been updated to ${newStatus}.`,
     });
+  };
+
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('all');
+    setOfficerFilter('all');
+    setFromMonth(currentMonth);
+    setFromYear(currentYear);
+    setToMonth(currentMonth);
+    setToYear(currentYear);
   };
 
   const filteredCases = useMemo(() => {
@@ -259,6 +269,10 @@ export default function DashboardPage() {
                       </SelectContent>
                     </Select>
                   </div>
+                  <Button variant="outline" onClick={handleResetFilters}>
+                    <RotateCcw className="mr-2 h-4 w-4" />
+                    Reset
+                  </Button>
               </div>
             </div>
           </div>
@@ -296,7 +310,7 @@ export default function DashboardPage() {
                       </TableCell>
                       <TableCell>{loanCase.loanType}</TableCell>
                       <TableCell>
-                        {new Date(loanCase.applicationDate).toLocaleDateString()}
+                        {format(parseISO(loanCase.applicationDate), 'dd-MMM-yyyy')}
                       </TableCell>
                       <TableCell>
                         <StatusBadge status={loanCase.status} />
