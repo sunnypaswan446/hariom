@@ -303,7 +303,9 @@ export const INITIAL_CASES: LoanCase[] = [
     const bankName = INITIAL_BANK_NAMES[Math.floor(Math.random() * (INITIAL_BANK_NAMES.length-1))];
     const caseType = CASE_TYPES[Math.floor(Math.random() * CASE_TYPES.length)];
     const applicationDate = new Date(Date.now() - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000));
-    const year = new Date().getFullYear() - 22 - Math.floor(Math.random() * 30);
+    
+    const currentYear = new Date().getFullYear();
+    const year = currentYear - 22 - Math.floor(Math.random() * 30);
     const month = Math.floor(Math.random() * 12);
     const day = Math.floor(Math.random() * 28) + 1; // Safely generate days up to 28
     const dob = new Date(year, month, day);
@@ -329,11 +331,13 @@ export const INITIAL_CASES: LoanCase[] = [
 
     if (status !== 'Document Pending' && status !== 'In Progress') {
         const secondHistoryTimestamp = new Date(firstHistoryTimestamp.getTime() + (2 * 24 * 60 * 60 * 1000));
-        history.push({
-            timestamp: secondHistoryTimestamp.toISOString(),
-            status: status,
-            remarks: `Case moved to ${status}.`
-        })
+        if (!isNaN(secondHistoryTimestamp.getTime())) {
+            history.push({
+                timestamp: secondHistoryTimestamp.toISOString(),
+                status: status,
+                remarks: `Case moved to ${status}.`
+            })
+        }
     }
 
     return {
@@ -370,7 +374,3 @@ export const INITIAL_CASES: LoanCase[] = [
     };
   })
 ];
-
-    
-
-    
