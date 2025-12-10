@@ -66,7 +66,8 @@ import {
   Percent,
   Clock,
   Shield,
-  FileSymlink
+  FileSymlink,
+  Download
 } from 'lucide-react';
 import React from 'react';
 import { STATUS_OPTIONS } from '@/lib/data';
@@ -144,6 +145,17 @@ export default function CaseDetailPage() {
       </div>
     </div>
   );
+  
+  const handleDownload = (file: File) => {
+    const url = URL.createObjectURL(file);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = file.name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   const approvedStatuses: CaseStatus[] = ['Approved', 'Disbursed'];
 
@@ -221,7 +233,7 @@ export default function CaseDetailPage() {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Approved Amount</FormLabel>
-                                    <FormControl><Input type="number" placeholder="5000" {...field} /></FormControl>
+                                    <FormControl><Input type="number" placeholder="5000" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} /></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -232,7 +244,7 @@ export default function CaseDetailPage() {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>ROI (%)</FormLabel>
-                                    <FormControl><Input type="number" placeholder="8.5" {...field} /></FormControl>
+                                    <FormControl><Input type="number" placeholder="8.5" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)}/></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -243,7 +255,7 @@ export default function CaseDetailPage() {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Approved Tenure</FormLabel>
-                                    <FormControl><Input type="number" placeholder="24" {...field} /></FormControl>
+                                    <FormControl><Input type="number" placeholder="24" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)}/></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -254,7 +266,7 @@ export default function CaseDetailPage() {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Processing Fee</FormLabel>
-                                    <FormControl><Input type="number" placeholder="100" {...field} /></FormControl>
+                                    <FormControl><Input type="number" placeholder="100" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)}/></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -265,7 +277,7 @@ export default function CaseDetailPage() {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Insurance Amount</FormLabel>
-                                    <FormControl><Input type="number" placeholder="50" {...field} /></FormControl>
+                                    <FormControl><Input type="number" placeholder="50" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)}/></FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -416,17 +428,45 @@ export default function CaseDetailPage() {
             </CardHeader>
             <CardContent>
               <ul className="space-y-3">
-                {loanCase.documents.map(doc => (
-                  <li key={doc.type} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {doc.uploaded ? <CheckCircle className="h-5 w-5 text-green-500" /> : <Circle className="h-5 w-5 text-muted-foreground" />}
-                      <span className="font-medium">{doc.type}</span>
-                    </div>
-                    <Badge variant={doc.uploaded ? "secondary" : "outline"}>
-                      {doc.uploaded ? "Uploaded" : "Pending"}
-                    </Badge>
-                  </li>
-                ))}
+                {loanCase.documents.map(doc => {
+                    const content = (
+                      <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center gap-2">
+                          {doc.uploaded ? <CheckCircle className="h-5 w-5 text-green-500" /> : <Circle className="h-5 w-5 text-muted-foreground" />}
+                          <span className="font-medium">{doc.type}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={doc.uploaded ? "secondary" : "outline"}>
+                            {doc.uploaded ? "Uploaded" : "Pending"}
+                          </Badge>
+                          {doc.uploaded && doc.file && (
+                             <Download className="h-5 w-5 text-muted-foreground" />
+                          )}
+                        </div>
+                      </div>
+                    );
+
+                    return (
+                        <li key={doc.type}>
+                          {doc.uploaded && doc.file ? (
+                            <a
+                              href="#"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleDownload(doc.file as File);
+                              }}
+                              className="flex items-center justify-between p-2 -m-2 rounded-md hover:bg-muted"
+                            >
+                              {content}
+                            </a>
+                          ) : (
+                            <div className="flex items-center justify-between p-2 -m-2">
+                              {content}
+                            </div>
+                          )}
+                        </li>
+                    );
+                })}
               </ul>
             </CardContent>
           </Card>
@@ -475,3 +515,5 @@ export default function CaseDetailPage() {
     </>
   );
 }
+
+    

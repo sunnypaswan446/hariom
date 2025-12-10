@@ -33,7 +33,7 @@ export type DocumentType =
 export interface LoanCaseDocument {
   type: DocumentType;
   uploaded: boolean;
-  file?: File | null;
+  file?: File | null | string;
 }
 
 export type BankName = string;
@@ -72,6 +72,8 @@ export interface LoanCase {
   processingFee?: number;
   insuranceAmount?: number;
 }
+
+    
 
     
 
