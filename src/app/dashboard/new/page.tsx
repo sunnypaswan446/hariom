@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 
 import { loanCaseSchema } from '@/lib/schema';
 import { useLoanStore } from '@/lib/store';
-import { LOAN_TYPES, JOB_PROFILES, STATUS_OPTIONS, DOCUMENT_TYPES, CASE_TYPES } from '@/lib/data';
+import { LOAN_TYPES, JOB_PROFILES, STATUS_OPTIONS, DOCUMENT_TYPES, CASE_TYPES } from '@/lib/constants';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -84,7 +84,7 @@ export default function AddLoanCasePage() {
 
   const handleFileChange = (index: number, file: File | null) => {
     if (file) {
-      const currentFiles = form.getValues('documents');
+      const currentFiles = form.getValues('documents') || [];
       const currentTotalSize = currentFiles.reduce((sum, doc) => {
         if (doc.file instanceof File) {
           return sum + doc.file.size;
@@ -114,6 +114,13 @@ export default function AddLoanCasePage() {
   function onSubmit(data: LoanCaseFormValues) {
     addCase({
       ...data,
+      email: data.email || '',
+      notes: data.notes || '',
+      jobDesignation: data.jobDesignation || '',
+      referenceName: data.referenceName || '',
+      bankName: data.bankName || '',
+      bankOfficeSm: data.bankOfficeSm || '',
+      documents: data.documents || [],
       applicationDate: data.applicationDate.toISOString(),
       dob: data.dob.toISOString(),
     });

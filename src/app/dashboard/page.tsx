@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useLoanStore } from '@/lib/store';
@@ -36,7 +36,7 @@ import { MoreHorizontal, PlusCircle, Download, Search, CheckCircle, Clock, Rotat
 import { PageHeader } from '@/components/page-header';
 import { StatusBadge } from '@/components/dashboard/status-badge';
 import type { CaseStatus, LoanCase, Officer } from '@/lib/types';
-import { STATUS_OPTIONS } from '@/lib/data';
+import { STATUS_OPTIONS } from '@/lib/constants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { parseISO, startOfMonth, endOfMonth, getYear, getMonth, format } from 'date-fns';
@@ -56,9 +56,14 @@ const getYears = () => {
 };
 
 export default function DashboardPage() {
-  const { cases, updateCaseStatus, officers } = useLoanStore();
+  const { cases, updateCaseStatus, officers, fetchCases, isLoading } = useLoanStore();
   const { toast } = useToast();
   const router = useRouter();
+
+  useEffect(() => {
+    fetchCases();
+  }, [fetchCases]);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<CaseStatus | 'all'>('all');
   const [officerFilter, setOfficerFilter] = useState<Officer | 'all'>('all');

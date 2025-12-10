@@ -71,7 +71,7 @@ import {
   Upload
 } from 'lucide-react';
 import React from 'react';
-import { STATUS_OPTIONS } from '@/lib/data';
+import { STATUS_OPTIONS } from '@/lib/constants';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -124,7 +124,7 @@ export default function CaseDetailPage() {
     });
     toast({
       title: 'Status Updated',
-      description: `Case ${loanCase.id} has been updated to ${data.status}.`,
+      description: `Case ${loanCase!.id} has been updated to ${data.status}.`,
     });
     form.reset({ ...data, remarks: '' });
     setIsDialogOpen(false);
@@ -394,9 +394,11 @@ export default function CaseDetailPage() {
                 label="Application Date"
                 value={new Date(loanCase.applicationDate).toLocaleDateString()}
               />
-              <DetailItem icon={Flag} label="Current Status">
-                <StatusBadge status={loanCase.status} />
-              </DetailItem>
+              <DetailItem 
+                icon={Flag} 
+                label="Current Status" 
+                value={<StatusBadge status={loanCase.status} />}
+              />
                <DetailItem
                 icon={Landmark}
                 label="Bank Name"

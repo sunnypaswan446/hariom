@@ -26,13 +26,9 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { format, parseISO, getYear, getMonth, startOfMonth, endOfMonth } from 'date-fns';
 
-const statusOrder: CaseStatus[] = [
-  'Pending',
-  'Under Review',
-  'Approved',
-  'Disbursed',
-  'Rejected',
-];
+import { STATUS_OPTIONS } from '@/lib/constants';
+
+const statusOrder: readonly CaseStatus[] = STATUS_OPTIONS;
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -78,9 +74,9 @@ export default function AnalyticsPage() {
   const stats = useMemo(() => {
     return {
       total: cases.length,
-      pending: cases.filter((c) => c.status === 'Pending').length,
+      pending: cases.filter((c) => c.status === 'Document Pending').length,
       approved: cases.filter((c) => c.status === 'Approved').length,
-      rejected: cases.filter((c) => c.status === 'Rejected').length,
+      rejected: cases.filter((c) => c.status === 'Reject').length,
     };
   }, [cases]);
 
