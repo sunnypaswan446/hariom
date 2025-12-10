@@ -100,7 +100,7 @@ export const INITIAL_CASES: LoanCase[] = [
     referenceName: 'Bob Johnson',
     bankName: 'HDFC Bank',
     bankOfficeSm: 'SM-1',
-    documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: true })),
+    documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: true, file: 'dummy.pdf' })),
     tenure: 24,
     obligation: 500,
     approvedAmount: 5000,
@@ -134,7 +134,7 @@ export const INITIAL_CASES: LoanCase[] = [
     referenceName: 'Carol Williams',
     bankName: 'HDFC Bank',
     bankOfficeSm: 'SM-2',
-    documents: DOCUMENT_TYPES.map((type, i) => ({ type, uploaded: i < 2 })),
+    documents: DOCUMENT_TYPES.map((type, i) => ({ type, uploaded: i < 2, file: i < 2 ? 'dummy.pdf' : null })),
     tenure: 240,
     obligation: 1500,
   },
@@ -161,7 +161,7 @@ export const INITIAL_CASES: LoanCase[] = [
     referenceName: 'Sally Brown',
     bankName: 'ICICI Bank',
     bankOfficeSm: 'SM-1',
-    documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: false })),
+    documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: false, file: null })),
     tenure: 48,
     obligation: 200,
   },
@@ -191,7 +191,7 @@ export const INITIAL_CASES: LoanCase[] = [
     referenceName: 'Steve Trevor',
     bankName: 'Axis Bank',
     bankOfficeSm: 'SM-3',
-    documents: DOCUMENT_TYPES.map((type, i) => ({ type, uploaded: i < 4 })),
+    documents: DOCUMENT_TYPES.map((type, i) => ({ type, uploaded: i < 4, file: i < 4 ? 'dummy.pdf' : null })),
     tenure: 60,
     obligation: 3000,
   },
@@ -222,7 +222,7 @@ export const INITIAL_CASES: LoanCase[] = [
     referenceName: 'Luther Stickell',
     bankName: 'Bajaj Finance Ltd.',
     bankOfficeSm: 'SM-4',
-    documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: true })),
+    documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: true, file: 'dummy.pdf' })),
     tenure: 12,
     obligation: 0,
     approvedAmount: 7500,
@@ -258,7 +258,7 @@ export const INITIAL_CASES: LoanCase[] = [
     bankName: 'Other',
     otherBankName: 'A Small Regional Bank',
     bankOfficeSm: 'SM-2',
-    documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: true })),
+    documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: true, file: 'dummy.pdf' })),
     tenure: 60,
     obligation: 0,
     approvedAmount: 20000,
@@ -290,7 +290,7 @@ export const INITIAL_CASES: LoanCase[] = [
     referenceName: 'Jerry Seinfeld',
     bankName: 'Other',
     bankOfficeSm: 'SM-3',
-    documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: false })),
+    documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: false, file: null })),
     tenure: 12,
     obligation: 100,
   },
@@ -302,8 +302,13 @@ export const INITIAL_CASES: LoanCase[] = [
     const jobProfile = JOB_PROFILES[Math.floor(Math.random() * JOB_PROFILES.length)];
     const bankName = INITIAL_BANK_NAMES[Math.floor(Math.random() * (INITIAL_BANK_NAMES.length-1))];
     const caseType = CASE_TYPES[Math.floor(Math.random() * CASE_TYPES.length)];
-    const applicationDate = new Date(Date.now() - Math.floor(Math.random() * 365 * 24 * 60 * 60 * 1000));
     
+    // Robust date generation
+    const today = new Date();
+    const threeYearsInMs = 3 * 365 * 24 * 60 * 60 * 1000;
+    const applicationDateTime = today.getTime() - Math.floor(Math.random() * threeYearsInMs);
+    const applicationDate = new Date(applicationDateTime);
+
     const currentYear = new Date().getFullYear();
     const year = currentYear - 22 - Math.floor(Math.random() * 30);
     const month = Math.floor(Math.random() * 12);
@@ -331,13 +336,11 @@ export const INITIAL_CASES: LoanCase[] = [
 
     if (status !== 'Document Pending' && status !== 'In Progress') {
         const secondHistoryTimestamp = new Date(firstHistoryTimestamp.getTime() + (2 * 24 * 60 * 60 * 1000));
-        if (!isNaN(secondHistoryTimestamp.getTime())) {
-            history.push({
-                timestamp: secondHistoryTimestamp.toISOString(),
-                status: status,
-                remarks: `Case moved to ${status}.`
-            })
-        }
+        history.push({
+            timestamp: secondHistoryTimestamp.toISOString(),
+            status: status,
+            remarks: `Case moved to ${status}.`
+        })
     }
 
     return {
@@ -363,7 +366,7 @@ export const INITIAL_CASES: LoanCase[] = [
       referenceName: `Reference ${caseNum}`,
       bankName,
       bankOfficeSm: `SM-${Math.floor(Math.random() * 5) + 1}`,
-      documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: Math.random() > 0.3 })),
+      documents: DOCUMENT_TYPES.map(type => ({ type, uploaded: Math.random() > 0.3, file: Math.random() > 0.3 ? 'dummy.pdf' : null })),
       tenure,
       obligation: Math.floor(Math.random() * 5000),
       approvedAmount,

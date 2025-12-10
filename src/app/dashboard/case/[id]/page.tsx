@@ -77,6 +77,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 
 type StatusUpdateFormValues = z.infer<typeof statusUpdateSchema>;
+const MAX_TOTAL_SIZE = 5 * 1024 * 1024; // 5 MB
 
 export default function CaseDetailPage() {
   const router = useRouter();
@@ -160,6 +161,22 @@ export default function CaseDetailPage() {
   
   const handleFileUpload = (docType: DocumentType, file: File) => {
     if (loanCase) {
+      const currentTotalSize = loanCase.documents.reduce((sum, doc) => {
+        if (doc.file instanceof File) {
+          return sum + doc.file.size;
+        }
+        return sum;
+      }, 0);
+
+      if (currentTotalSize + file.size > MAX_TOTAL_SIZE) {
+        toast({
+          variant: "destructive",
+          title: "File Size Limit Exceeded",
+          description: `Total file size cannot exceed 5 MB.`,
+        });
+        return;
+      }
+      
       updateCaseDocument(loanCase.id, docType, file);
       toast({
         title: "Document Uploaded",
@@ -436,6 +453,7 @@ export default function CaseDetailPage() {
           <Card>
             <CardHeader>
               <CardTitle>Uploaded Documents</CardTitle>
+              <CardDescription>Total file size cannot exceed 5MB.</CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-3">
@@ -481,7 +499,15 @@ export default function CaseDetailPage() {
                               href="#"
                               onClick={(e) => {
                                 e.preventDefault();
-                                handleDownload(doc.file as File);
+                                if (doc.file instanceof File) {
+                                    handleDownload(doc.file);
+                                } else {
+                                    toast({
+                                        variant: "destructive",
+                                        title: "Download Error",
+                                        description: "File is not available for download.",
+                                    })
+                                }
                               }}
                               className="flex items-center justify-between p-2 -m-2 rounded-md hover:bg-muted"
                             >
@@ -543,3 +569,5 @@ export default function CaseDetailPage() {
     </>
   );
 }
+
+    

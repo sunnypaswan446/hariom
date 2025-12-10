@@ -46,6 +46,7 @@ import React from 'react';
 
 
 type LoanCaseFormValues = z.infer<typeof loanCaseSchema>;
+const MAX_TOTAL_SIZE = 5 * 1024 * 1024; // 5 MB
 
 export default function AddLoanCasePage() {
   const router = useRouter();
@@ -80,6 +81,28 @@ export default function AddLoanCasePage() {
   });
 
   const handleFileChange = (index: number, file: File | null) => {
+    if (file) {
+      const currentFiles = form.getValues('documents');
+      const currentTotalSize = currentFiles.reduce((sum, doc) => {
+        if (doc.file instanceof File) {
+          return sum + doc.file.size;
+        }
+        return sum;
+      }, 0);
+
+      const newTotalSize = currentTotalSize + file.size;
+
+      if (newTotalSize > MAX_TOTAL_SIZE) {
+        toast({
+          variant: "destructive",
+          title: "File Size Limit Exceeded",
+          description: `Total file size cannot exceed 5 MB.`,
+        });
+        (document.getElementById(`doc-upload-${index}`) as HTMLInputElement).value = '';
+        return;
+      }
+    }
+    
     const currentDocument = form.getValues(`documents.${index}`);
     update(index, { ...currentDocument, uploaded: !!file, file });
   };
@@ -582,7 +605,7 @@ export default function AddLoanCasePage() {
             <Card>
                 <CardHeader>
                     <CardTitle>Document Uploads</CardTitle>
-                    <FormDescription>Upload the required documents for the application.</FormDescription>
+                    <FormDescription>Upload the required documents for the application. Total size cannot exceed 5MB.</FormDescription>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {fields.map((field, index) => (
@@ -645,7 +668,5 @@ export default function AddLoanCasePage() {
     </>
   );
 }
-
-    
 
     
