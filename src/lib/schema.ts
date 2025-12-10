@@ -1,6 +1,6 @@
 
 import { z } from 'zod';
-import { LOAN_TYPES, STATUS_OPTIONS, DOCUMENT_TYPES, CASE_TYPES, INITIAL_BANK_NAMES, JOB_PROFILES } from './data';
+import { LOAN_TYPES, STATUS_OPTIONS, DOCUMENT_TYPES, CASE_TYPES, JOB_PROFILES } from './data';
 
 const phoneRegex = new RegExp(
   /^([+]?[\s0-9]+)?(\d{3}|[(]\d{3}[)])?[\s-]?(\d{3})[\s-]?(\d{4})$/
@@ -30,7 +30,7 @@ export const loanCaseSchema = z.object({
   contactNumber: z.string().regex(phoneRegex, 'Invalid phone number format.'),
   email: z.string().email({
     message: 'Please enter a valid email address.',
-  }),
+  }).optional().or(z.literal('')),
   address: z.string().min(5, {
     message: 'Address must be at least 5 characters.',
   }),
@@ -53,13 +53,11 @@ export const loanCaseSchema = z.object({
   jobProfile: z.enum(JOB_PROFILES, {
     errorMap: () => ({ message: 'Please select a valid job profile.' }),
   }),
-  jobDesignation: z.string().min(2, { message: 'Job designation is required.' }),
-  referenceName: z.string().min(2, { message: 'Reference name is required.' }),
-  bankName: z.string({
-    errorMap: () => ({ message: 'Please select a valid bank.' }),
-  }),
+  jobDesignation: z.string().optional(),
+  referenceName: z.string().optional(),
+  bankName: z.string().optional(),
   otherBankName: z.string().optional(),
-  bankOfficeSm: z.string().min(2, { message: 'Bank Office/SM is required.' }),
+  bankOfficeSm: z.string().optional(),
   documents: z.array(z.object({
     type: z.enum(DOCUMENT_TYPES),
     uploaded: z.boolean(),

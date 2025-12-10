@@ -58,6 +58,8 @@ export default function AddLoanCasePage() {
     defaultValues: {
       applicantName: '',
       loanAmount: 0,
+      loanType: 'Personal',
+      applicationDate: new Date(),
       contactNumber: '',
       email: '',
       address: '',
@@ -668,5 +670,3 @@ export default function AddLoanCasePage() {
     </>
   );
 }
-
-    
