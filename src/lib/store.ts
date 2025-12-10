@@ -3,7 +3,7 @@
 
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import type { LoanCase, CaseStatus, CaseUpdate, Officer, BankName } from './types';
+import type { LoanCase, CaseStatus, CaseUpdate, Officer, BankName, DocumentType } from './types';
 import { INITIAL_CASES, OFFICERS as INITIAL_OFFICERS, INITIAL_BANK_NAMES } from './data';
 
 type State = {
@@ -28,6 +28,7 @@ type Actions = {
   addBank: (name: BankName) => void;
   updateBank: (oldName: BankName, newName: BankName) => void;
   removeBank: (name: BankName) => void;
+  updateCaseDocument: (caseId: string, docType: DocumentType, file: File) => void;
 };
 
 export const useLoanStore = create<State & Actions>()(
@@ -144,8 +145,19 @@ export const useLoanStore = create<State & Actions>()(
       set(state => {
         state.banks = state.banks.filter(b => b !== name);
       });
+    },
+    
+    updateCaseDocument: (caseId, docType, file) => {
+      set(state => {
+        const loanCase = state.cases.find(c => c.id === caseId);
+        if (loanCase) {
+          const doc = loanCase.documents.find(d => d.type === docType);
+          if (doc) {
+            doc.uploaded = true;
+            doc.file = file;
+          }
+        }
+      });
     }
   }))
 );
-
-    

@@ -72,9 +72,3 @@ export interface LoanCase {
   processingFee?: number;
   insuranceAmount?: number;
 }
-
-    
-
-    
-
-    

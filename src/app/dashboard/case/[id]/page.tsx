@@ -43,7 +43,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { StatusBadge } from '@/components/dashboard/status-badge';
-import type { CaseStatus } from '@/lib/types';
+import type { CaseStatus, DocumentType } from '@/lib/types';
 import {
   ArrowLeft,
   Briefcase,
@@ -67,7 +67,8 @@ import {
   Clock,
   Shield,
   FileSymlink,
-  Download
+  Download,
+  Upload
 } from 'lucide-react';
 import React from 'react';
 import { STATUS_OPTIONS } from '@/lib/data';
@@ -81,7 +82,7 @@ export default function CaseDetailPage() {
   const router = useRouter();
   const params = useParams();
   const { toast } = useToast();
-  const { getCaseById, updateCaseStatus } = useLoanStore();
+  const { getCaseById, updateCaseStatus, updateCaseDocument } = useLoanStore();
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
   const loanCase = getCaseById(params.id as string);
@@ -155,6 +156,16 @@ export default function CaseDetailPage() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+  
+  const handleFileUpload = (docType: DocumentType, file: File) => {
+    if (loanCase) {
+      updateCaseDocument(loanCase.id, docType, file);
+      toast({
+        title: "Document Uploaded",
+        description: `${docType} has been successfully uploaded.`,
+      });
+    }
   };
 
   const approvedStatuses: CaseStatus[] = ['Approved', 'Disbursed'];
@@ -422,7 +433,7 @@ export default function CaseDetailPage() {
               </Card>
            )}
 
-           <Card>
+          <Card>
             <CardHeader>
               <CardTitle>Uploaded Documents</CardTitle>
             </CardHeader>
@@ -441,6 +452,23 @@ export default function CaseDetailPage() {
                           </Badge>
                           {doc.uploaded && doc.file && (
                              <Download className="h-5 w-5 text-muted-foreground" />
+                          )}
+                          {!doc.uploaded && (
+                            <>
+                              <Input
+                                type="file"
+                                id={`upload-${doc.type}`}
+                                className="hidden"
+                                onChange={(e) => {
+                                  if (e.target.files?.[0]) {
+                                    handleFileUpload(doc.type, e.target.files[0]);
+                                  }
+                                }}
+                              />
+                              <label htmlFor={`upload-${doc.type}`} className="cursor-pointer">
+                                <Upload className="h-5 w-5 text-muted-foreground" />
+                              </label>
+                            </>
                           )}
                         </div>
                       </div>
@@ -515,5 +543,3 @@ export default function CaseDetailPage() {
     </>
   );
 }
-
-    
