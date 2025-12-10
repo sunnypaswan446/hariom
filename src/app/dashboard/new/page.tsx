@@ -356,9 +356,23 @@ export default function AddLoanCasePage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Tenure (in months)</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="24" {...field} />
-                        </FormControl>
+                        <Select
+                          onValueChange={(value) => field.onChange(Number(value))}
+                          defaultValue={String(field.value)}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select tenure" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {[12, 24, 36, 48, 60, 72, 84].map((tenure) => (
+                              <SelectItem key={tenure} value={String(tenure)}>
+                                {tenure}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
