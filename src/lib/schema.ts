@@ -1,19 +1,12 @@
 
 import { z } from 'zod';
-import { LOAN_TYPES, STATUS_OPTIONS, DOCUMENT_TYPES, CASE_TYPES, INITIAL_BANK_NAMES } from './data';
-import { useLoanStore } from './store'; // Cannot do this in schema file
+import { LOAN_TYPES, STATUS_OPTIONS, DOCUMENT_TYPES, CASE_TYPES, INITIAL_BANK_NAMES, JOB_PROFILES } from './data';
 
 const phoneRegex = new RegExp(
   /^([+]?[\s0-9]+)?(\d{3}|[(]\d{3}[)])?[\s-]?(\d{3})[\s-]?(\d{4})$/
 );
 
 const panRegex = new RegExp(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/);
-
-// This is a workaround since we can't use hooks/zustand in this file.
-// In a real app, this list would likely come from an API.
-const getOfficers = () => useLoanStore.getState().officers;
-const getBanks = () => useLoanStore.getState().banks;
-
 
 export const loanCaseSchema = z.object({
   applicantName: z.string().min(2, {
@@ -57,7 +50,7 @@ export const loanCaseSchema = z.object({
     required_error: 'Date of birth is required.',
   }),
   panCardNumber: z.string().regex(panRegex, 'Invalid PAN card number format.'),
-  jobProfile: z.enum(['Government', 'Private', 'Business'], {
+  jobProfile: z.enum(JOB_PROFILES, {
     errorMap: () => ({ message: 'Please select a valid job profile.' }),
   }),
   jobDesignation: z.string().min(2, { message: 'Job designation is required.' }),
@@ -96,5 +89,3 @@ export const statusUpdateSchema = z.object({
   processingFee: z.coerce.number().optional(),
   insuranceAmount: z.coerce.number().optional(),
 });
-
-    
