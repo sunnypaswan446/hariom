@@ -43,7 +43,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { StatusBadge } from '@/components/dashboard/status-badge';
-import type { CaseStatus, DocumentType } from '@/lib/types';
+import type { DocumentType } from '@/lib/types';
 import {
   ArrowLeft,
   Briefcase,
@@ -77,6 +77,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 
 type StatusUpdateFormValues = z.infer<typeof statusUpdateSchema>;
+type StatusOption = (typeof STATUS_OPTIONS)[number];
 const MAX_TOTAL_SIZE = 5 * 1024 * 1024; // 5 MB
 
 export default function CaseDetailPage() {
@@ -88,10 +89,15 @@ export default function CaseDetailPage() {
 
   const loanCase = getCaseById(params.id as string);
 
+  const validStatus =
+    loanCase?.status && STATUS_OPTIONS.includes(loanCase.status as StatusOption)
+      ? (loanCase.status as StatusOption)
+      : undefined;
+
   const form = useForm<StatusUpdateFormValues>({
     resolver: zodResolver(statusUpdateSchema),
     defaultValues: {
-      status: loanCase?.status,
+      status: validStatus,
       remarks: '',
       approvedAmount: loanCase?.approvedAmount || undefined,
       roi: loanCase?.roi || undefined,
@@ -101,7 +107,7 @@ export default function CaseDetailPage() {
     },
   });
 
-  const selectedStatus = form.watch('status');
+  const selectedStatus = form.watch('status') as StatusOption | undefined;
 
   if (!loanCase) {
     return (
@@ -148,18 +154,28 @@ export default function CaseDetailPage() {
     </div>
   );
   
-  const handleDownload = (file: File) => {
-    const url = URL.createObjectURL(file);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = file.name;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  const handleDownload = (file: File | string) => {
+    if (file instanceof File) {
+      const url = URL.createObjectURL(file);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } else if (typeof file === 'string') {
+      window.open(file, '_blank', 'noopener,noreferrer');
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Download Error",
+        description: "File is not available for download.",
+      });
+    }
   };
   
-  const handleFileUpload = (docType: DocumentType, file: File) => {
+  const handleFileUpload = async (docType: DocumentType, file: File) => {
     if (loanCase) {
       const currentTotalSize = loanCase.documents.reduce((sum, doc) => {
         if (doc.file instanceof File) {
@@ -177,15 +193,23 @@ export default function CaseDetailPage() {
         return;
       }
       
-      updateCaseDocument(loanCase.id, docType, file);
-      toast({
-        title: "Document Uploaded",
-        description: `${docType} has been successfully uploaded.`,
-      });
+      try {
+        await updateCaseDocument(loanCase.id, docType, file);
+        toast({
+          title: "Document Uploaded",
+          description: `${docType} has been successfully uploaded.`,
+        });
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Upload Failed",
+          description: error?.message || "Could not upload the document.",
+        });
+      }
     }
   };
 
-  const approvedStatuses: CaseStatus[] = ['Approved', 'Disbursed'];
+  const approvedStatuses: StatusOption[] = ['Approved', 'Disbursed'];
 
   return (
     <>
@@ -251,7 +275,7 @@ export default function CaseDetailPage() {
                   )}
                 />
                 
-                {approvedStatuses.includes(selectedStatus as CaseStatus) && (
+                {selectedStatus && approvedStatuses.includes(selectedStatus) && (
                    <div className="space-y-4 pt-4 border-t">
                       <h4 className="font-medium text-foreground">Approval Details</h4>
                       <div className="grid grid-cols-2 gap-4">
@@ -417,7 +441,7 @@ export default function CaseDetailPage() {
             </CardContent>
           </Card>
 
-           {approvedStatuses.includes(loanCase.status) && (
+           {approvedStatuses.includes(loanCase.status as StatusOption) && (
               <Card>
                 <CardHeader>
                   <CardTitle>Approved Loan Details</CardTitle>
@@ -501,14 +525,14 @@ export default function CaseDetailPage() {
                               href="#"
                               onClick={(e) => {
                                 e.preventDefault();
-                                if (doc.file instanceof File) {
-                                    handleDownload(doc.file);
+                                if (doc.file) {
+                                  handleDownload(doc.file);
                                 } else {
-                                    toast({
-                                        variant: "destructive",
-                                        title: "Download Error",
-                                        description: "File is not available for download.",
-                                    })
+                                  toast({
+                                      variant: "destructive",
+                                      title: "Download Error",
+                                      description: "File is not available for download.",
+                                  })
                                 }
                               }}
                               className="flex items-center justify-between p-2 -m-2 rounded-md hover:bg-muted"
