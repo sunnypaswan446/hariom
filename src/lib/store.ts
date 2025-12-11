@@ -3,7 +3,7 @@
 
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import type { LoanCase, CaseStatus, CaseUpdate, Officer, BankName, DocumentType } from './types';
+import type { LoanCase, CaseStatus, CaseUpdate, Officer, BankName, DocumentType, LoanCaseDocument } from './types';
 import { 
   DEFAULT_OFFICERS, 
   INITIAL_BANK_NAMES, 
@@ -14,6 +14,7 @@ import {
   DOCUMENT_TYPES 
 } from './constants';
 import type { AppConfigItem } from './supabase/api';
+import type { Database } from './supabase/database.types';
 
 type AppConfig = {
   activeLoanTypes: string[];
@@ -60,7 +61,7 @@ type Actions = {
   addBank: (name: BankName) => void;
   updateBank: (oldName: BankName, newName: BankName) => void;
   removeBank: (name: BankName) => void;
-  updateCaseDocument: (caseId: string, docType: DocumentType, file: File) => void;
+  updateCaseDocument: (caseId: string, docType: DocumentType, file: File) => Promise<void>;
 };
 
 export const useLoanStore = create<State & Actions>()(
@@ -88,41 +89,54 @@ export const useLoanStore = create<State & Actions>()(
             
             // Fetch Config
             const configItems = await fetchAppConfig();
-            
-            set(state => {
-                state.cases = data;
-                state.isLoading = false;
-                
-                // If we got config from DB, override defaults
-                if (configItems && configItems.length > 0) {
-                    // Helper to filter by category
-                    const getValues = (cat: string) => configItems.filter(i => i.category === cat).map(i => i.value);
-                    
+
+            // Helper: doc type list with DB override support
+            const applyConfigOverrides = (state: State, items: AppConfigItem[] | null) => {
+                if (items && items.length > 0) {
+                    const getValues = (cat: string) => items.filter(i => i.category === cat).map(i => i.value);
+
                     const dbLoanTypes = getValues('LOAN_TYPE');
-                    if(dbLoanTypes.length) state.config.activeLoanTypes = dbLoanTypes;
-                    
+                    if (dbLoanTypes.length) state.config.activeLoanTypes = dbLoanTypes;
+
                     const dbCaseTypes = getValues('CASE_TYPE');
-                    if(dbCaseTypes.length) state.config.activeCaseTypes = dbCaseTypes;
+                    if (dbCaseTypes.length) state.config.activeCaseTypes = dbCaseTypes;
 
                     const dbJobProfiles = getValues('JOB_PROFILE');
-                    if(dbJobProfiles.length) state.config.activeJobProfiles = dbJobProfiles;
+                    if (dbJobProfiles.length) state.config.activeJobProfiles = dbJobProfiles;
 
                     const dbStatus = getValues('CASE_STATUS');
-                    if(dbStatus.length) state.config.activeStatusOptions = dbStatus;
+                    if (dbStatus.length) state.config.activeStatusOptions = dbStatus;
 
                     const dbDocs = getValues('DOCUMENT_TYPE');
-                    if(dbDocs.length) state.config.activeDocumentTypes = dbDocs;
-                    
+                    if (dbDocs.length) state.config.activeDocumentTypes = dbDocs;
+
                     const dbBanks = getValues('BANK_NAME');
-                    if(dbBanks.length) state.config.activeBankNames = dbBanks;
+                    if (dbBanks.length) state.config.activeBankNames = dbBanks;
 
                     const dbMembers = getValues('TEAM_MEMBER');
-                    if(dbMembers.length) {
+                    if (dbMembers.length) {
                         state.config.activeOfficers = dbMembers;
-                        // Also update the main officers list to reflect config
                         state.officers = dbMembers;
                     }
                 }
+            };
+
+            set(state => {
+                // Apply configuration overrides before computing document placeholders
+                applyConfigOverrides(state, configItems);
+
+                const docTypes = state.config.activeDocumentTypes.length
+                  ? state.config.activeDocumentTypes
+                  : Array.from(DOCUMENT_TYPES);
+
+                const mergeDocs = (docs: LoanCaseDocument[] = []) => {
+                  const docMap = new Map<string, LoanCaseDocument>();
+                  docs.forEach(doc => docMap.set(doc.type, doc));
+                  return docTypes.map(type => docMap.get(type) ?? { type, uploaded: false, file: null });
+                };
+
+                state.cases = data.map(c => ({ ...c, documents: mergeDocs(c.documents || []) }));
+                state.isLoading = false;
             });
         } catch (e: any) {
             set({ isLoading: false, error: e.message });
@@ -215,15 +229,68 @@ export const useLoanStore = create<State & Actions>()(
     
     addCase: async (newCase) => {
       set({ isLoading: true });
+      const uploadDocument = async (caseId: string, docType: DocumentType, file: File) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('caseId', caseId);
+        formData.append('documentType', docType);
+
+        const res = await fetch('/api/case-documents', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const payload = await res.json();
+        if (!res.ok) {
+          throw new Error(payload?.error || 'Failed to upload document.');
+        }
+        return payload.document as Database['public']['Tables']['case_documents']['Row'];
+      };
+
+      const mergeDocs = (docs: LoanCaseDocument[] = [], docTypes: string[]) => {
+        const docMap = new Map<string, LoanCaseDocument>();
+        docs.forEach(doc => docMap.set(doc.type, doc));
+        return docTypes.map(type => docMap.get(type) ?? { type, uploaded: false, file: null });
+      };
+
       try {
         const { createLoanCase } = await import('./supabase/api');
         const createdCase = await createLoanCase(newCase);
-        
+
         if (createdCase) {
-             set((state) => {
-                state.cases.unshift(createdCase);
-                state.isLoading = false;
-             });
+          const docTypes = get().config.activeDocumentTypes.length
+            ? get().config.activeDocumentTypes
+            : Array.from(DOCUMENT_TYPES);
+
+          const docsToUpload = (newCase.documents || []).filter(
+            (doc) => doc.file instanceof File
+          );
+
+          let uploadedDocs: Database['public']['Tables']['case_documents']['Row'][] = [];
+          if (docsToUpload.length) {
+            uploadedDocs = await Promise.all(
+              docsToUpload.map((doc) =>
+                uploadDocument(createdCase.id, doc.type, doc.file as File)
+              )
+            );
+          }
+
+          const mergedDocuments = mergeDocs(
+            [
+              ...(createdCase.documents || []),
+              ...uploadedDocs.map((doc) => ({
+                type: doc.document_type,
+                uploaded: doc.uploaded,
+                file: doc.file_url,
+              })),
+            ],
+            docTypes
+          );
+
+          set((state) => {
+            state.cases.unshift({ ...createdCase, documents: mergedDocuments });
+            state.isLoading = false;
+          });
         }
       } catch (e: any) {
         set({ isLoading: false, error: e.message });
@@ -328,17 +395,57 @@ export const useLoanStore = create<State & Actions>()(
       });
     },
     
-    updateCaseDocument: (caseId, docType, file) => {
-      set(state => {
-        const loanCase = state.cases.find(c => c.id === caseId);
-        if (loanCase) {
-          const doc = loanCase.documents.find(d => d.type === docType);
-          if (doc) {
-            doc.uploaded = true;
-            doc.file = file;
-          }
+    updateCaseDocument: async (caseId, docType, file) => {
+      set({ isLoading: true });
+      const uploadDocument = async () => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('caseId', caseId);
+        formData.append('documentType', docType);
+
+        const res = await fetch('/api/case-documents', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const payload = await res.json();
+        if (!res.ok) {
+          throw new Error(payload?.error || 'Failed to upload document.');
         }
-      });
+        return payload.document as Database['public']['Tables']['case_documents']['Row'];
+      };
+
+      const docTypes = get().config.activeDocumentTypes.length
+        ? get().config.activeDocumentTypes
+        : Array.from(DOCUMENT_TYPES);
+
+      const mergeDocs = (docs: LoanCaseDocument[] = []) => {
+        const docMap = new Map<string, LoanCaseDocument>();
+        docs.forEach(doc => docMap.set(doc.type, doc));
+        return docTypes.map(type => docMap.get(type) ?? { type, uploaded: false, file: null });
+      };
+
+      try {
+        const uploadedDoc = await uploadDocument();
+        set(state => {
+          state.isLoading = false;
+          const loanCase = state.cases.find(c => c.id === caseId);
+          if (loanCase) {
+            loanCase.documents = mergeDocs([
+              ...(loanCase.documents || []),
+              {
+                type: uploadedDoc.document_type,
+                uploaded: uploadedDoc.uploaded,
+                file: uploadedDoc.file_url,
+              },
+            ]);
+          }
+        });
+      } catch (e: any) {
+        set({ isLoading: false, error: e.message });
+        console.error('Failed to upload document:', e);
+        throw e;
+      }
     }
   }))
 );
