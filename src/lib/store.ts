@@ -6,13 +6,13 @@ import { immer } from 'zustand/middleware/immer';
 import type { LoanCase, CaseStatus, CaseUpdate, Officer, BankName, DocumentType } from './types';
 import { 
   DEFAULT_OFFICERS, 
-  INITIAL_BANK_NAMES, 
   LOAN_TYPES, 
   CASE_TYPES, 
   JOB_PROFILES, 
   STATUS_OPTIONS, 
   DOCUMENT_TYPES 
 } from './constants';
+import { INITIAL_BANK_NAMES } from './data';
 import type { AppConfigItem } from './supabase/api';
 
 type AppConfig = {
@@ -114,7 +114,10 @@ export const useLoanStore = create<State & Actions>()(
                     if(dbDocs.length) state.config.activeDocumentTypes = dbDocs;
                     
                     const dbBanks = getValues('BANK_NAME');
-                    if(dbBanks.length) state.config.activeBankNames = dbBanks;
+                    if(dbBanks.length) {
+                        state.config.activeBankNames = dbBanks;
+                        state.banks = dbBanks;
+                    }
 
                     const dbMembers = getValues('TEAM_MEMBER');
                     if(dbMembers.length) {
@@ -145,7 +148,10 @@ export const useLoanStore = create<State & Actions>()(
                     if (category === 'JOB_PROFILE') state.config.activeJobProfiles.push(value);
                     if (category === 'CASE_STATUS') state.config.activeStatusOptions.push(value);
                     if (category === 'DOCUMENT_TYPE') state.config.activeDocumentTypes.push(value);
-                    if (category === 'BANK_NAME') state.config.activeBankNames.push(value);
+                    if (category === 'BANK_NAME') {
+                        state.config.activeBankNames.push(value);
+                        state.banks.push(value);
+                    }
                     if (category === 'TEAM_MEMBER') {
                         state.config.activeOfficers.push(value);
                         state.officers.push(value);
@@ -168,7 +174,10 @@ export const useLoanStore = create<State & Actions>()(
                  if (category === 'CASE_TYPE') state.config.activeCaseTypes = state.config.activeCaseTypes.filter(v => v !== value);
                  if (category === 'CASE_STATUS') state.config.activeStatusOptions = state.config.activeStatusOptions.filter(v => v !== value);
                  if (category === 'DOCUMENT_TYPE') state.config.activeDocumentTypes = state.config.activeDocumentTypes.filter(v => v !== value);
-                 if (category === 'BANK_NAME') state.config.activeBankNames = state.config.activeBankNames.filter(v => v !== value);
+                 if (category === 'BANK_NAME') {
+                     state.config.activeBankNames = state.config.activeBankNames.filter(v => v !== value);
+                     state.banks = state.banks.filter(v => v !== value);
+                 }
                  if (category === 'JOB_PROFILE') state.config.activeJobProfiles = state.config.activeJobProfiles.filter(v => v !== value);
                  if (category === 'TEAM_MEMBER') {
                      state.config.activeOfficers = state.config.activeOfficers.filter(v => v !== value);
