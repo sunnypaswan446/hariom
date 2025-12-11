@@ -1,34 +1,18 @@
 
-export type CaseStatus =
-  | 'Document Pending'
-  | 'Complete'
-  | 'Login'
-  | 'In Progress'
-  | 'Hold'
-  | 'RIC'
-  | 'Reject'
-  | 'Disbursed'
-  | 'Approved';
+// Types are now dynamic strings to support dashboard configuration
+export type CaseStatus = string;
+export type LoanType = string;
+export type CaseType = string;
+export type JobProfile = string;
+export type DocumentType = string;
 
-export type LoanType = 'Personal' | 'Home' | 'Car' | 'Business' | 'Education';
-export type CaseType = 'New' | 'BT' | 'Top-Up';
 export type Officer = string;
-
-export type JobProfile = 'Government' | 'Private' | 'Business';
 
 export interface CaseUpdate {
   timestamp: string;
   status: CaseStatus;
   remarks: string;
 }
-
-export type DocumentType = 
-  | 'TVR Form' 
-  | 'Aadhaar Card' 
-  | 'Pan Card' 
-  | 'Salary Slip' 
-  | 'Bank Statement' 
-  | 'Loan Tracks';
 
 export interface LoanCaseDocument {
   type: DocumentType;

@@ -1,4 +1,6 @@
 // @ts-nocheck
+// @ts-nocheck
+import './env-config';
 import { supabase } from './client';
 import { INITIAL_CASES } from '../data';
 

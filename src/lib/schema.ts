@@ -1,6 +1,6 @@
 
 import { z } from 'zod';
-import { LOAN_TYPES, STATUS_OPTIONS, DOCUMENT_TYPES, CASE_TYPES, JOB_PROFILES } from './data';
+import { LOAN_TYPES, STATUS_OPTIONS, DOCUMENT_TYPES, CASE_TYPES, JOB_PROFILES } from './constants';
 
 const phoneRegex = new RegExp(
   /^([+]?[\s0-9]+)?(\d{3}|[(]\d{3}[)])?[\s-]?(\d{3})[\s-]?(\d{4})$/

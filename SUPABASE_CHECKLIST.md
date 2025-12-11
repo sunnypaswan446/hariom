@@ -16,75 +16,75 @@ Use this checklist to complete your Supabase setup.
 ## 📋 Your Setup Tasks
 
 ### Step 1: Create Supabase Account & Project
-- [ ] Go to https://supabase.com
-- [ ] Sign up / Sign in
-- [ ] Click "New Project"
-- [ ] Fill in project details:
-  - [ ] Project Name: `loan-management` (or your choice)
-  - [ ] Database Password: (create & save securely)
-  - [ ] Region: (choose closest to you)
-- [ ] Click "Create new project"
-- [ ] Wait ~2 minutes for provisioning
+- [x] Go to https://supabase.com
+- [x] Sign up / Sign in
+- [x] Click "New Project"
+- [x] Fill in project details:
+  - [x] Project Name: `loan-management` (or your choice)
+  - [x] Database Password: (create & save securely)
+  - [x] Region: (choose closest to you)
+- [x] Click "Create new project"
+- [x] Wait ~2 minutes for provisioning
 
 ### Step 2: Get API Credentials
-- [ ] In Supabase dashboard, go to Settings → API
-- [ ] Copy **Project URL**
-- [ ] Copy **anon public** key
-- [ ] Copy **service_role** key
+- [x] In Supabase dashboard, go to Settings → API
+- [x] Copy **Project URL**
+- [x] Copy **anon public** key
+- [x] Copy **service_role** key
 
 ### Step 3: Configure Environment Variables
-- [ ] Create `.env.local` file in project root
-- [ ] Add the following (replace with your actual values):
+- [x] Create `.env.local` file in project root
+- [x] Add the following (replace with your actual values):
   ```env
   NEXT_PUBLIC_SUPABASE_URL=your-project-url-here
   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
   ```
-- [ ] Save the file
-- [ ] **DO NOT** commit `.env.local` to git
+- [x] Save the file
+- [x] **DO NOT** commit `.env.local` to git
 
 ### Step 4: Run Database Migration
-- [ ] In Supabase dashboard, go to SQL Editor
-- [ ] Click "New Query"
-- [ ] Open `supabase/migrations/001_initial_schema.sql` from your project
-- [ ] Copy all the SQL code
-- [ ] Paste into Supabase SQL Editor
-- [ ] Click "Run" (or Ctrl+Enter)
-- [ ] Verify success message
+- [x] In Supabase dashboard, go to SQL Editor
+- [x] Click "New Query"
+- [x] Open `supabase/migrations/001_initial_schema.sql` from your project
+- [x] Copy all the SQL code
+- [x] Paste into Supabase SQL Editor
+- [x] Click "Run" (or Ctrl+Enter)
+- [x] Verify success message
 
 ### Step 5: Verify Tables Created
-- [ ] In Supabase dashboard, go to Table Editor
-- [ ] Confirm these tables exist:
-  - [ ] `loan_cases`
-  - [ ] `case_history`
-  - [ ] `case_documents`
+- [x] In Supabase dashboard, go to Table Editor
+- [x] Confirm these tables exist:
+  - [x] `loan_cases`
+  - [x] `case_history`
+  - [x] `case_documents`
 
 ### Step 6: Seed Database (Optional but Recommended)
-- [ ] Open terminal in project root
-- [ ] Run: `npm run seed-db`
-- [ ] Wait for completion message
-- [ ] Verify in Supabase Table Editor that data was inserted
+- [x] Open terminal in project root
+- [x] Run: `npm run seed-db`
+- [x] Wait for completion message
+- [x] Verify in Supabase Table Editor that data was inserted
 
 ### Step 7: Test the Integration
-- [ ] Restart your dev server: `npm run dev`
-- [ ] Create a test page or component
-- [ ] Try fetching data:
+- [x] Restart your dev server: `npm run dev`
+- [x] Create a test page or component
+- [x] Try fetching data:
   ```typescript
   import { getAllLoanCases } from '@/lib/supabase';
   
   const cases = await getAllLoanCases();
   console.log(`Found ${cases.length} cases`);
   ```
-- [ ] Verify data is returned
+- [x] Verify data is returned
 
 ## 🧪 Testing Checklist
 
 ### Basic Operations
-- [ ] Fetch all cases: `getAllLoanCases()`
-- [ ] Fetch single case: `getLoanCaseById('LC-001')`
-- [ ] Create new case: `createLoanCase(newCase)`
+- [x] Fetch all cases: `getAllLoanCases()`
+- [x] Fetch single case: `getLoanCaseById('LC-001')` (Verified with LC-407)
+- [x] Create new case: `createLoanCase(newCase)`
 - [ ] Update case: `updateLoanCase('LC-001', updates)`
-- [ ] Delete case: `deleteLoanCase('LC-001')`
+- [x] Delete case: `deleteLoanCase('LC-001')`
 - [ ] Search cases: `searchLoanCases('john')`
 
 ### Verify Data Integrity
